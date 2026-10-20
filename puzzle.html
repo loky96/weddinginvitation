@@ -16,10 +16,10 @@
 <link rel="stylesheet" href="tied-scroll.css">
 <style>
   body.theme-puzzle { background-color: #faf0dc;
-    background-image: url('assets/kolam-pattern.svg'), url('assets/paper-texture.svg'); background-size: 320px 320px, 192px 192px; }
+    background-image: url('assets/kolam-pattern.svg'), url('assets/paper-texture.svg'); background-size: 480px 480px, 192px 192px; }
   .kolam-background { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity .8s; }
   body.entered .kolam-background { opacity: 1; }
-  .kolam-background .kolam { position: absolute; width: clamp(230px, 38vw, 460px); height: auto; opacity: .045; }
+  .kolam-background .kolam { position: absolute; width: clamp(230px, 38vw, 460px); height: auto; opacity: .07; }
   .kolam-background .k-lines * { stroke: var(--maroon); stroke-width: 1.1; }
   .kolam-background .k-dots { fill: var(--gold); }
   .kolam-background .kolam:nth-child(1) { top: -65px; left: -90px; transform: rotate(12deg); }
@@ -27,24 +27,37 @@
   .kolam-background .kolam:nth-child(3) { bottom: -105px; left: -75px; transform: rotate(24deg); }
   .game, .scroll-wrap { position: relative; z-index: 1; }
   @media (prefers-reduced-motion: reduce) { .kolam-background { transition: none; } }
-  .temple-approach { height: 440svh; background: #1c0d0a; position: relative; z-index: 20; }
-  .temple-sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; background: #1c0d0a; }
+  .temple-approach { height: 760svh; background: #1c0d0a; position: relative; z-index: 20; }
+  .temple-sticky { position: fixed; inset: 0; height: 100svh; overflow: hidden; background: #1c0d0a; }
   .temple-sticky::before { content: ''; position: absolute; inset: -24px; background: url('assets/temple-entrance.png') center / cover;
     filter: blur(22px) brightness(.55); opacity: .8; }
   .temple-art { position: absolute; top: 0; left: 0; width: 1086px; height: 1448px; transform-origin: 0 0; will-change: transform; }
   .temple-art img { display: block; width: 100%; height: 100%; }
   .temple-doors { position: absolute; left: 35%; top: 47.5%; width: 33%; height: 37.7%; display: flex; perspective: 900px; background: #432010; }
-  .temple-interior { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
-    color: var(--maroon); text-align: center; opacity: 0; background: radial-gradient(ellipse at 50% 35%, #fffdf0, #f8e7c7 65%, #d6ab69); }
-  .temple-interior::before { content: ''; position: absolute; inset: 22px; border: 1px solid #c58b3080; outline: 1px solid #c58b3040; outline-offset: 5px; }
-  .temple-interior .kolam { width: 80px; height: 80px; }
-  .temple-interior p { position: relative; margin: 0; font: 600 48px/1.2 var(--serif); }
-  .temple-interior em { display: block; font-size: 28px; color: var(--gold); }
+  .temple-interior { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+    padding: 32px 26px; color: var(--maroon); text-align: center; opacity: 0; background-color: #ecddbf;
+    background-image: url('assets/paper-texture.svg'), radial-gradient(ellipse at 50% 40%, #fbf1dc, #e4cea4);
+    background-size: 160px 160px, 100% 100%; }
+  .temple-interior::before { content: ''; position: absolute; inset: 12px; border-block: 2px double #ad824f80;
+    background: url('assets/kolam-border.svg') left top / 8px 32px repeat-y, url('assets/kolam-border.svg') right top / 8px 32px repeat-y; }
+  .temple-interior p { position: relative; margin: 0; }
+  .temple-interior .interior-invocation { font: 600 22px/1 'Noto Serif Tamil', serif; }
+  .temple-interior .interior-crest { width: 70px; height: 70px; opacity: .8; }
+  .temple-interior .interior-eyebrow { font: 600 10px/1.5 var(--body); letter-spacing: .22em; text-transform: uppercase; }
+  .temple-interior .interior-names { font: italic 600 38px/1.12 var(--serif); }
+  .temple-interior .interior-names em { display: block; font-size: 23px; color: #a4773b; padding: 4px 0; }
+  .interior-rule { width: 62px; height: 1px; background: #a4773b80; margin: 4px 0; }
+  .temple-interior .interior-date { font: 600 15px/1.7 var(--serif); }
+  .interior-date span { font: 500 10px/1.5 var(--body); letter-spacing: .22em; text-transform: uppercase; }
   /* Crop the transparent gutters from the door artwork so the closed edges meet the stone frame. */
   .temple-leaf { width: 50%; height: 100%; background-image: url('assets/temple-doors.png'); background-size: 213.3333% 106.815%;
     background-color: #432010; background-repeat: no-repeat; position: relative; z-index: 1; backface-visibility: hidden; will-change: transform; }
   .temple-leaf.left { background-position: 5.8824% 40.8163%; transform-origin: left center; }
   .temple-leaf.right { background-position: 94.1176% 40.8163%; transform-origin: right center; }
+  @media (max-width: 768px) {
+    .temple-art { width: 841px; height: 1870px; }
+    .temple-doors { left: 31.4%; top: 59.7%; width: 37.3%; height: 32.6%; }
+  }
   .temple-approach.departing { position: fixed; inset: 0; height: 100svh; pointer-events: none; transition: opacity .9s ease; }
   .temple-approach.departing .temple-sticky { position: absolute; inset: 0; }
   .temple-approach.departing.faded { opacity: 0; }
@@ -77,8 +90,8 @@
   .skip-entrance:focus-visible { outline: 3px solid var(--marigold); outline-offset: 3px; }
 
   .stage { position: relative; margin: 0 auto; touch-action: manipulation; }
-  #board { position: absolute; }
-  .board-frame { position: absolute; box-sizing: content-box; border: 9px solid transparent; border-image: url('assets/puzzle-border.svg') 24 round;
+  #board { position: absolute; background: url('assets/paper-texture.svg') 0 0 / 160px 160px, #e9ddc4; }
+  .board-frame { position: absolute; box-sizing: content-box; border: 6px solid transparent; border-image: url('assets/puzzle-border.svg') 24 round;
     pointer-events: none; filter: drop-shadow(0 2px 3px #b77f2520); }
   .shine { position: absolute; pointer-events: none; overflow: hidden; border-radius: 2px; z-index: 5; }
   .shine::after { content: ''; position: absolute; inset: -20% auto -20% -60%; width: 45%; transform: skewX(-20deg);
@@ -115,6 +128,9 @@
   .scroll-wrap .rod::before, .scroll-wrap .roll::before { left: 0; }
   .scroll-wrap .rod::after, .scroll-wrap .roll::after { right: 0; }
   .scroll-wrap .mount { min-width: 0; padding-inline: 0; }
+  .scroll-wrap .mount::before, .scroll-wrap .mount::after { width: 10px; background: url('assets/kolam-border.svg') center top / 10px 40px repeat-y; }
+  .scroll-wrap .mount::before { left: 1px; }
+  .scroll-wrap .mount::after { right: 1px; }
   .scroll-wrap .sheet, .scroll-wrap .paper { min-width: 0; width: 100%; }
   .scroll-wrap .knot .label { border: 0; border-radius: 0; background: transparent; box-shadow: none;
     padding: 6px 4px; font: italic 600 1.15rem/1.35 var(--serif); color: var(--maroon); animation: none; }
@@ -154,6 +170,7 @@
   .paper .lotus-end { display: block; width: 70px; margin: 14px auto 0; }
   .paper p, .paper h3 { text-wrap: balance; overflow-wrap: break-word; }
   .paper .kolam { width: 34px; margin: 0 auto 8px; display: block; }
+  .paper .section-kolam { display: block; width: 46px; height: 46px; margin: 0 auto 10px; opacity: .8; }
   .paper h2 { font: 600 .72rem/1.3 var(--body); letter-spacing: .28em; text-transform: uppercase; color: var(--verm); margin: 0 0 14px; }
   .paper h2::after { width: 40px; margin-top: 10px; }
   .paper .lead { font-size: .95rem; max-width: 24ch; margin-bottom: 1em; }
@@ -223,9 +240,19 @@
 <section class="temple-approach" aria-label="South Indian temple entrance">
   <div class="temple-sticky">
     <div class="temple-art">
-      <img src="assets/temple-entrance.png" width="1086" height="1448" fetchpriority="high" alt="A South Indian temple entrance at sunset, decorated with wedding garlands and glowing lamps">
+      <picture>
+        <source media="(max-width: 768px)" srcset="assets/temple-entrance-mobile.png">
+        <img src="assets/temple-entrance.png" width="1086" height="1448" fetchpriority="high" alt="A South Indian temple entrance at sunset, decorated with wedding garlands and glowing lamps">
+      </picture>
       <div class="temple-doors" aria-hidden="true">
-        <div class="temple-interior"><p>Lokesh<em>&amp;</em>Haripriya</p></div>
+        <div class="temple-interior">
+          <p class="interior-invocation" lang="ta">உ</p>
+          <img class="interior-crest" src="assets/kolam-cross.svg" width="70" height="70" alt="">
+          <p class="interior-eyebrow">The wedding of</p>
+          <p class="interior-names">Lokesh<em>&amp;</em>Haripriya</p>
+          <span class="interior-rule"></span>
+          <p class="interior-date">21 &amp; 22 November 2026<br><span>Chennai</span></p>
+        </div>
         <div class="temple-leaf left"></div><div class="temple-leaf right"></div>
       </div>
     </div>
@@ -265,12 +292,15 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="invite.js"></script>
+<script src="invitation-sound.js"></script>
 <script src="temple-scene.js"></script>
 <script src="puzzle-images.js"></script>
 <script>
   const $main = document.getElementById('main');
-  document.querySelector('.kolam-background').innerHTML = INVITE.art.kolam.repeat(3);
-  INVITE.render($main, { ornament: INVITE.art.kolam });
+  const kolamVariants = ['assets/kolam-diamond.svg', 'assets/kolam-flower.svg', 'assets/kolam-cross.svg'];
+  document.querySelector('.kolam-background').innerHTML = kolamVariants.map(src => `<img class="kolam" src="${src}" alt="">`).join('');
+  INVITE.render($main, { ornament: '<img class="section-kolam" src="assets/kolam-diamond.svg" width="46" height="46" alt="" aria-hidden="true">' });
+  $main.querySelectorAll('.section-kolam').forEach((image, i) => { image.src = kolamVariants[i % kolamVariants.length]; });
   // This version keeps the scroll lean: no sign-off, share row or links to other designs.
   document.querySelectorAll('#main .signoff-h, #main .signoff, #blessings .rule, #share .btns:first-of-type, #share p.small, #date p.small, #date .legend').forEach(el => el.remove());
   document.querySelectorAll('#main .qual').forEach(q => { q.textContent = q.textContent.replace(/^,\s*/, ''); }); // qualifications sit on their own line here
@@ -300,7 +330,6 @@
     card.querySelectorAll('a[download], .note').forEach(el => el.remove());
     card.querySelector('.btn').textContent = 'Add to Calendar';
   });
-  document.querySelector('.temple-interior').insertAdjacentHTML('afterbegin', INVITE.art.kolam);
   // Traditional ornaments: thoranam, Pillaiyar suzhi, lotus dividers, and a closing lotus.
   const LOTUS = '<svg viewBox="0 0 92 48" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M46 44c-10-6-14-16-12-30 6 8 10 18 12 30zM46 44c10-6 14-16 12-30-6 8-10 18-12 30zM46 44c-4-12-2-24 0-34 2 10 4 22 0 34z"/><path d="M46 44c-14 0-24-6-30-16 10 2 20 8 30 16zM46 44c14 0 24-6 30-16-10 2-20 8-30 16z"/><path d="M14 44h64" stroke-width="1.2"/></g><circle cx="46" cy="44" r="2.4" fill="#B32A1C"/></svg>';
   const paper = document.querySelector('.paper');
@@ -416,7 +445,7 @@
     cg.scale(dpr, dpr);
     drawCover(cg, S);
     for (const el of [board, $('shine')]) Object.assign(el.style, { left: boardX + 'px', top: boardY + 'px', width: S + 'px', height: S + 'px' });
-    Object.assign($('board-frame').style, { left: boardX - 9 + 'px', top: boardY - 9 + 'px', width: S + 'px', height: S + 'px' });
+    Object.assign($('board-frame').style, { left: boardX - 6 + 'px', top: boardY - 6 + 'px', width: S + 'px', height: S + 'px' });
     board.width = board.height = S * dpr;
 
     const H = Array.from({ length: n - 1 }, () => Array.from({ length: n }, rnd));
@@ -483,7 +512,10 @@
     const { S, t, cell } = geo, bg = board.getContext('2d');
     bg.setTransform(dpr, 0, 0, dpr, 0, 0);
     bg.clearRect(0, 0, S, S);
-    bg.fillStyle = 'rgba(255,250,238,.85)';
+    const parchment = bg.createLinearGradient(0, 0, 0, S);
+    parchment.addColorStop(0, 'rgba(228,213,182,.86)');
+    parchment.addColorStop(1, 'rgba(240,229,206,.88)');
+    bg.fillStyle = parchment;
     bg.fillRect(0, 0, S, S);
     bg.setLineDash([2, 5]);
     bg.lineCap = 'round';
@@ -512,6 +544,7 @@
     p.el.classList.toggle('glide', animate);
     setPos(p, p.tx, p.ty);
     if (animate) {
+      window.InvitationSound?.play('piece', pieces.filter(piece => piece.placed).length);
       setTimeout(() => {
         p.el.classList.add('pop');
         const ring = document.createElement('span');
@@ -533,6 +566,7 @@
     stage.style.height = geo.mobile ? geo.boardY + geo.S + 12 + 'px' : geo.stageH + 'px';
     $('solved').hidden = false;
     if (!animate) return;
+    window.InvitationSound?.play('complete');
     const R = stage.getBoundingClientRect();
     [0, 300, 600].forEach((d, i) => setTimeout(() => INVITE.petals(R.left + geo.SW * (.25 + .25 * i), R.top + geo.S * .4, 22), d));
     openScroll(2200);
@@ -543,8 +577,14 @@
     knot.querySelector('.label').textContent = 'Untie the cord';
     setTimeout(() => {
       hang.scrollIntoView({ behavior: INVITE.reduced ? 'auto' : 'smooth', block: 'start' });
-      setTimeout(() => INVITE.unroll(hang), delay ? 700 : 0);
+      setTimeout(revealScroll, delay ? 700 : 0);
     }, delay);
+  }
+
+  function revealScroll() {
+    if (hang.classList.contains('untied')) return;
+    window.InvitationSound?.play('scroll');
+    INVITE.unroll(hang);
   }
 
   // Pull the cord 80 CSS pixels to open early; shorter pulls spring back.
@@ -592,7 +632,7 @@
   knot.addEventListener('click', e => {
     if (suppressKnotClick) { suppressKnotClick = false; e.preventDefault(); return; }
     if (hang.classList.contains('untied')) return;
-    if (stage.classList.contains('done')) return INVITE.unroll(hang);
+    if (stage.classList.contains('done')) return revealScroll();
     knot.classList.remove('nudge'); void knot.offsetWidth; knot.classList.add('nudge');
     INVITE.toast('Solve the puzzle, or pull the cord down to open');
   });

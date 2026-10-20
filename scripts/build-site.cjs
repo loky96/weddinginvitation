@@ -10,11 +10,13 @@ const imageUrls = images.map(file => file.split('/').map(encodeURIComponent).joi
 fs.writeFileSync(path.join(root, 'puzzle-images.js'), `window.PUZZLE_IMAGES = ${JSON.stringify(imageUrls, null, 2)};\n`);
 const files = [
   'index.html', 'puzzle.html', 'base.css', 'tied-scroll.css',
-  'invite.js', 'temple-scene.js',
+  'invite.js', 'temple-scene.js', 'invitation-sound.js',
   'assets/temple-entrance.png', 'assets/temple-doors.png',
   'assets/puzzle-image.png', 'assets/puzzle-border.svg',
   'assets/kolam-pattern.svg', 'assets/paper-texture.svg',
   'assets/reception-illustration.png', 'assets/wedding-illustration.png',
+  'assets/kolam-diamond.svg', 'assets/kolam-flower.svg', 'assets/kolam-cross.svg', 'assets/kolam-border.svg',
+  'assets/temple-entrance-mobile.png',
   'puzzle-images.js', ...images,
 ];
 

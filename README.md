@@ -2,6 +2,8 @@
 
 A static wedding invitation with a scroll-controlled South Indian temple entrance, a 16-piece photo puzzle, diya progress lights, kolam backgrounds, and an unrolling invitation scroll.
 
+Phones use a dedicated tall temple illustration. The camera eases between scenes even after quick swipes. Interwoven kolam variants decorate the page and scroll edges. Gentle synthesized sounds are enabled by default and start after the browser permits audio on the first tap or keypress.
+
 ## Files
 
 - `puzzle.html`: invitation and puzzle layout.

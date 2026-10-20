@@ -10,7 +10,7 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = v => Math.max(0, Math.min(1, v));
   const ease = v => { const t = clamp(v); return t * t * (3 - 2 * t); };
-  let entered = false, pending = false;
+  let entered = false, pending = false, shownProgress = 0, lastFrame = 0, doorsHeard = false;
 
   function finish() {
     if (entered) return;
@@ -29,31 +29,43 @@
     }, reduced ? 0 : 950);
   }
 
-  function draw() {
+  function draw(timestamp = performance.now()) {
     pending = false;
     if (entered) return;
     const w = viewport.clientWidth, h = viewport.clientHeight;
-    const p = clamp(window.scrollY / Math.max(1, scene.offsetHeight - h));
-    // Begin with the complete facade on smaller screens, then approach the lower entrance.
-    const overview = w <= 768;
-    const detailScale = Math.max(w / 1086, h / 1040);
-    const start = overview ? Math.min(w / 1086, h / 1448) : detailScale;
-    const target = Math.max(w / 340, h / 520);
+    const requested = clamp(window.scrollY / Math.max(1, scene.offsetHeight - h));
+    const elapsed = Math.min(Math.max((timestamp - lastFrame) / 1000, 1 / 120), .05);
+    lastFrame = timestamp;
+    const difference = requested - shownProgress;
+    // Cap camera speed so a fast swipe still shows each scene, then ease to its resting point.
+    if (reduced || Math.abs(difference) < .0001) shownProgress = requested;
+    else shownProgress += Math.sign(difference) * Math.min(Math.abs(difference) * .16, elapsed * .18);
+    const p = shownProgress;
+    const mobile = matchMedia('(max-width: 768px)').matches;
+    const imageW = mobile ? 841 : 1086, imageH = mobile ? 1870 : 1448;
+    const doorW = mobile ? 314 : 358, doorH = mobile ? 610 : 546;
+    const doorX = mobile ? 421 : 559, doorY = mobile ? 1422 : 960;
+    art.style.width = imageW + 'px';
+    art.style.height = imageH + 'px';
+    const start = Math.max(w / imageW, h / (mobile ? imageH : 1040));
+    const target = Math.max(w / (doorW * .94), h / (doorH * .94));
     const pan = ease(p / .42);
     const zoom = ease((p - .42) / .32);
-    const approachScale = overview ? start + (detailScale - start) * pan : start;
-    const s = approachScale + (target - approachScale) * zoom;
-    const initialY = overview ? 724 : h / (2 * start);
-    const lowY = Math.min(960, 1448 - h / (2 * detailScale));
-    const cy = (initialY + (lowY - initialY) * pan) * (1 - zoom) + 960 * zoom;
-    const cx = 543 + (559 - 543) * zoom;
+    const s = start + (target - start) * zoom;
+    const initialY = h / (2 * start);
+    const lowY = Math.min(doorY, imageH - h / (2 * start));
+    const cy = (initialY + (lowY - initialY) * pan) * (1 - zoom) + doorY * zoom;
+    const cx = imageW / 2 + (doorX - imageW / 2) * zoom;
     art.style.transform = `translate(${w / 2 - cx * s}px, ${h / 2 - cy * s}px) scale(${s})`;
     const angle = 105 * ease((p - .76) / .21);
     left.style.transform = `rotateY(${-angle}deg)`;
     right.style.transform = `rotateY(${angle}deg)`;
     interior.style.opacity = String(ease((p - .76) / .08));
+    if (angle > 0 && !doorsHeard) { window.InvitationSound?.play('doors'); doorsHeard = true; }
+    if (p < .74) doorsHeard = false;
     cue.style.opacity = String(1 - ease(p / .15));
     if (p >= .995 || (reduced && p > .06)) finish();
+    else if (Math.abs(requested - shownProgress) >= .0001) schedule();
   }
   function schedule() {
     if (!pending && !entered) { pending = true; requestAnimationFrame(draw); }
