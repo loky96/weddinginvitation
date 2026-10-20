@@ -8,7 +8,7 @@ function mount(width, height, reduced = false) {
   const listeners = new Map(), frames = [], timers = [], events = [];
   const classes = new Set();
   const element = () => ({ style: {}, classList: { add: (...names) => names.forEach(n => classes.add(n)) } });
-  const art = element(), left = element(), right = element(), cue = element();
+  const art = element(), left = element(), right = element(), cue = element(), interior = element();
   const sections = [{ inert: true }, { inert: true }];
   let skip, removed = false, focused = false;
   const scene = {
@@ -16,6 +16,7 @@ function mount(width, height, reduced = false) {
     querySelector: selector => ({
       '.temple-sticky': { clientWidth: width, clientHeight: height },
       '.temple-art': art, '.temple-leaf.left': left, '.temple-leaf.right': right,
+      '.temple-interior': interior,
       '.scroll-cue': cue, '.skip-entrance': { addEventListener: (_, callback) => skip = callback },
     })[selector],
     remove: () => removed = true,
@@ -37,7 +38,7 @@ function mount(width, height, reduced = false) {
   vm.runInNewContext(source, context);
   const flush = () => { while (frames.length) frames.shift()(); };
   return {
-    art, left, right, classes, sections, events, window,
+    art, left, right, interior, classes, sections, events, window,
     scroll: p => { window.scrollY = p * (scene.offsetHeight - height); listeners.get('scroll')?.(); flush(); },
     skip: () => { skip(); flush(); },
     settle: () => { while (timers.length) timers.shift()(); },
@@ -61,8 +62,10 @@ for (const [width, height] of [[320, 568], [390, 844], [1440, 900]]) {
     assert.ok(zoomed[2] > initial[2], 'doorway grows to fill the viewport');
     assert.ok(358 * zoomed[2] >= width && 546 * zoomed[2] >= height);
     assert.equal(page.left.style.transform, 'rotateY(0deg)', 'doors remain closed until zoom finishes');
+    assert.equal(page.interior.style.opacity, '0', 'pale interior cannot leak around closed doors');
     page.scroll(.9);
     assert.ok(parseFloat(page.left.style.transform.slice(8)) < -60, 'doors now open');
+    assert.equal(page.interior.style.opacity, '1', 'warm interior appears behind the opening doors');
     assert.ok(!page.classes.has('entered'), 'puzzle waits for the doors');
     page.scroll(1);
     assert.ok(page.classes.has('entered'));

@@ -29,16 +29,16 @@
   .temple-sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; background: #1c0d0a; }
   .temple-art { position: absolute; top: 0; left: 0; width: 1086px; height: 1448px; transform-origin: 0 0; will-change: transform; }
   .temple-art img { display: block; width: 100%; height: 100%; }
-  .temple-doors { position: absolute; left: 35%; top: 47.5%; width: 33%; height: 37.7%; display: flex; perspective: 900px; background: #f8e7c7; }
+  .temple-doors { position: absolute; left: 35%; top: 47.5%; width: 33%; height: 37.7%; display: flex; perspective: 900px; background: #432010; }
   .temple-interior { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
-    color: var(--maroon); text-align: center; background: radial-gradient(ellipse at 50% 35%, #fffdf0, #f8e7c7 65%, #d6ab69); }
+    color: var(--maroon); text-align: center; opacity: 0; background: radial-gradient(ellipse at 50% 35%, #fffdf0, #f8e7c7 65%, #d6ab69); }
   .temple-interior::before { content: ''; position: absolute; inset: 22px; border: 1px solid #c58b3080; outline: 1px solid #c58b3040; outline-offset: 5px; }
   .temple-interior .kolam { width: 80px; height: 80px; }
   .temple-interior p { position: relative; margin: 0; font: 600 48px/1.2 var(--serif); }
   .temple-interior em { display: block; font-size: 28px; color: var(--gold); }
   /* Crop the transparent gutters from the door artwork so the closed edges meet the stone frame. */
   .temple-leaf { width: 50%; height: 100%; background-image: url('assets/temple-doors.png'); background-size: 213.3333% 106.815%;
-    position: relative; z-index: 1; backface-visibility: hidden; will-change: transform; }
+    background-color: #432010; background-repeat: no-repeat; position: relative; z-index: 1; backface-visibility: hidden; will-change: transform; }
   .temple-leaf.left { background-position: 5.8824% 40.8163%; transform-origin: left center; }
   .temple-leaf.right { background-position: 94.1176% 40.8163%; transform-origin: right center; }
   .temple-approach.departing { position: fixed; inset: 0; height: 100svh; pointer-events: none; transition: opacity .9s ease; }
@@ -102,6 +102,7 @@
   @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
 
   .scroll-wrap { padding: 14px 20px 80px; }
+  .scroll-wrap:has(.hang:not(.untied)) { padding-bottom: calc(240px + env(safe-area-inset-bottom)); }
   .scroll-wrap .hang { width: min(100% - 56px, 520px); }
   /* Sleek typesetting inside the scroll: smaller, airier type, quiet dividers, no boxes. */
   .paper { --paisley: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 3c9 0 15 7 15 15 0 10-9 17-17 19C9 34 4 26 6 17 8 9 13 3 20 3z' fill='none' stroke='%23C58B30' stroke-width='1.4'/%3E%3Cpath d='M20 9c5 0 9 4 9 9 0 6-5 10-10 11-5-2-8-7-7-12 1-4 4-8 8-8z' fill='none' stroke='%23B32A1C' stroke-width='1'/%3E%3Ccircle cx='19' cy='19' r='2.2' fill='%23C58B30'/%3E%3Cpath d='M18 33l-4 4M22 33l4 4' stroke='%23587A37' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); }

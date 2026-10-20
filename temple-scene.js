@@ -5,6 +5,7 @@
   const art = scene.querySelector('.temple-art');
   const left = scene.querySelector('.temple-leaf.left');
   const right = scene.querySelector('.temple-leaf.right');
+  const interior = scene.querySelector('.temple-interior');
   const cue = scene.querySelector('.scroll-cue');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = v => Math.max(0, Math.min(1, v));
@@ -47,6 +48,7 @@
     const angle = 105 * ease((p - .76) / .21);
     left.style.transform = `rotateY(${-angle}deg)`;
     right.style.transform = `rotateY(${angle}deg)`;
+    interior.style.opacity = String(ease((p - .76) / .08));
     cue.style.opacity = String(1 - ease(p / .15));
     if (p >= .995 || (reduced && p > .06)) finish();
   }
