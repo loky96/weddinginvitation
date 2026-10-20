@@ -1,0 +1,9 @@
+[build]
+  command = "node scripts/build-site.cjs"
+  publish = "dist"
+
+[[redirects]]
+  from = "/"
+  to = "/puzzle.html"
+  status = 200
+

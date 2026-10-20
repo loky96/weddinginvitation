@@ -11,10 +11,20 @@
 <meta name="theme-color" content="#7B0712">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Noto+Serif:wght@400;600&family=Noto+Serif+Tamil:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Great+Vibes&family=Noto+Serif:wght@400;600&family=Noto+Serif+Tamil:wght@600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="tied-scroll.css">
 <style>
+  .kolam-background { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity .8s; }
+  body.entered .kolam-background { opacity: 1; }
+  .kolam-background .kolam { position: absolute; width: clamp(230px, 38vw, 460px); height: auto; opacity: .1; }
+  .kolam-background .k-lines * { stroke: var(--maroon); stroke-width: 1.1; }
+  .kolam-background .k-dots { fill: var(--gold); }
+  .kolam-background .kolam:nth-child(1) { top: -65px; left: -90px; transform: rotate(12deg); }
+  .kolam-background .kolam:nth-child(2) { top: 32%; right: -110px; transform: rotate(-12deg); }
+  .kolam-background .kolam:nth-child(3) { bottom: -105px; left: -75px; transform: rotate(24deg); }
+  .game, .scroll-wrap { position: relative; z-index: 1; }
+  @media (prefers-reduced-motion: reduce) { .kolam-background { transition: none; } }
   .temple-approach { height: 440svh; background: #1c0d0a; position: relative; z-index: 20; }
   .temple-sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; background: #1c0d0a; }
   .temple-art { position: absolute; top: 0; left: 0; width: 1086px; height: 1448px; transform-origin: 0 0; will-change: transform; }
@@ -26,10 +36,11 @@
   .temple-interior .kolam { width: 80px; height: 80px; }
   .temple-interior p { position: relative; margin: 0; font: 600 48px/1.2 var(--serif); }
   .temple-interior em { display: block; font-size: 28px; color: var(--gold); }
-  .temple-leaf { width: 50%; height: 100%; background-image: url('assets/temple-doors.png'); background-size: 200% 100%;
+  /* Crop the transparent gutters from the door artwork so the closed edges meet the stone frame. */
+  .temple-leaf { width: 50%; height: 100%; background-image: url('assets/temple-doors.png'); background-size: 213.3333% 106.815%;
     position: relative; z-index: 1; backface-visibility: hidden; will-change: transform; }
-  .temple-leaf.left { background-position: left center; transform-origin: left center; }
-  .temple-leaf.right { background-position: right center; transform-origin: right center; }
+  .temple-leaf.left { background-position: 5.8824% 40.8163%; transform-origin: left center; }
+  .temple-leaf.right { background-position: 94.1176% 40.8163%; transform-origin: right center; }
   .temple-approach.departing { position: fixed; inset: 0; height: 100svh; pointer-events: none; transition: opacity .9s ease; }
   .temple-approach.departing .temple-sticky { position: absolute; inset: 0; }
   .temple-approach.departing.faded { opacity: 0; }
@@ -44,11 +55,24 @@
 
   .game { max-width: 600px; margin: 0 auto; padding: clamp(20px, 4vh, 40px) 20px 12px; text-align: center; }
   @media (max-width: 600px) { .game { padding-left: 10px; padding-right: 10px; } }
-  .game h1 { font-size: clamp(1rem, 3.2vw, 1.25rem); line-height: 1.4; margin: 0 0 16px; text-wrap: balance; }
+  .puzzle-heading { max-width: 460px; margin: 0 auto 10px; }
+  .game h1 { font: 400 clamp(1.55rem, 4.8vw, 2rem)/1.45 'Great Vibes', 'Brush Script MT', cursive; margin: 0; text-wrap: balance; }
+  .diya-progress { display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); gap: 3px; max-width: 360px; margin: 0 auto 6px; }
+  .progress-diya { display: block; width: 100%; height: auto; overflow: visible; }
+  .diya-bowl { fill: #a97a61; opacity: .45; transition: fill .4s, opacity .4s; }
+  .diya-fire { opacity: 0; transform: scale(.5); transform-origin: 18px 19px; transition: opacity .5s, transform .5s; }
+  .is-lit .diya-bowl { fill: #b95430; opacity: 1; }
+  .is-lit .diya-fire { opacity: 1; transform: scale(1); }
+  .diya-halo { filter: blur(3px); }
+  .is-lit .diya-flame { transform-origin: 18px 19px; animation: diya-flicker 2.7s ease-in-out var(--delay) infinite; }
+  @keyframes diya-flicker { 50% { transform: scale(.93, 1.07); } }
+  @media (prefers-reduced-motion: reduce) { .diya-fire, .diya-bowl { transition: none; } .is-lit .diya-flame { animation: none; } }
   .skip-entrance:focus-visible { outline: 3px solid var(--marigold); outline-offset: 3px; }
 
   .stage { position: relative; margin: 0 auto; touch-action: manipulation; }
-  #board { position: absolute; border-radius: 2px; box-shadow: 0 0 0 2px var(--gold), 0 0 0 7px rgba(197,139,48,.18); }
+  #board { position: absolute; }
+  .board-frame { position: absolute; box-sizing: content-box; border: 9px solid transparent; border-image: url('assets/puzzle-border.svg') 24 round;
+    pointer-events: none; filter: drop-shadow(0 2px 3px #b77f2520); }
   .shine { position: absolute; pointer-events: none; overflow: hidden; border-radius: 2px; z-index: 5; }
   .shine::after { content: ''; position: absolute; inset: -20% auto -20% -60%; width: 45%; transform: skewX(-20deg);
     background: linear-gradient(90deg, transparent, rgba(255,236,180,.75), transparent); opacity: 0; }
@@ -67,9 +91,9 @@
   .piece.glide { transition: transform .55s cubic-bezier(.3,1.3,.5,1), filter .2s; }
   .piece.placed { filter: none; z-index: 1 !important; cursor: default; pointer-events: none; }
   .piece:focus-visible { outline: none; filter: drop-shadow(0 0 4px var(--marigold)) drop-shadow(0 0 4px var(--marigold)); }
-  .done #board { animation: glow 1.8s ease-out; }
+  .done .board-frame { animation: frame-glow 1.8s ease-out; }
   .done .piece { opacity: 0; transition: opacity .6s .5s; }
-  @keyframes glow { 0% { box-shadow: 0 0 0 2px var(--gold), 0 0 0 0 rgba(242,159,5,.9); } 100% { box-shadow: 0 0 0 2px var(--gold), 0 0 0 40px rgba(242,159,5,0); } }
+  @keyframes frame-glow { 40% { filter: drop-shadow(0 0 10px #f2b54490); } }
 
   .solved { margin: 14px auto 0; max-width: 420px; animation: rise .6s ease-out both; }
   .solved[hidden] { display: none; }
@@ -166,6 +190,8 @@
 </head>
 <body class="theme-puzzle">
 
+<div class="kolam-background" aria-hidden="true"></div>
+
 <section class="temple-approach" aria-label="South Indian temple entrance">
   <div class="temple-sticky">
     <div class="temple-art">
@@ -181,9 +207,13 @@
 </section>
 
 <section class="game" aria-labelledby="g-title" inert>
-  <h1 id="g-title" tabindex="-1">Piece together our beginning.</h1>
+  <div class="puzzle-heading">
+    <h1 id="g-title" tabindex="-1">Piece together our beginning.</h1>
+  </div>
+  <div class="diya-progress" id="diya-progress" role="progressbar" aria-label="Puzzle pieces placed" aria-valuemin="0" aria-valuemax="16" aria-valuenow="0"></div>
   <div class="stage" id="stage">
     <canvas id="board" aria-hidden="true"></canvas>
+    <div class="board-frame" id="board-frame" aria-hidden="true"></div>
     <div class="shine" id="shine" aria-hidden="true"></div>
   </div>
   <div class="solved" id="solved" hidden>
@@ -209,6 +239,7 @@
 <script src="temple-scene.js"></script>
 <script>
   const $main = document.getElementById('main');
+  document.querySelector('.kolam-background').innerHTML = INVITE.art.kolam.repeat(3);
   INVITE.render($main, { ornament: INVITE.art.kolam });
   // This version keeps the scroll lean: no sign-off, share row or links to other designs.
   document.querySelectorAll('#main .signoff-h, #main .signoff, #blessings .rule, #share .btns:first-of-type, #share p.small, #date p.small, #date .legend').forEach(el => el.remove());
@@ -249,252 +280,27 @@
   const stage = $('stage'), board = $('board');
   const dpr = Math.min(devicePixelRatio || 1, 2);
   const n = 4;
+  const diyaProgress = $('diya-progress');
+  diyaProgress.innerHTML = Array.from({ length: n * n }, (_, i) => `<svg class="progress-diya" viewBox="0 0 36 32" aria-hidden="true" style="--delay:${-i * .17}s">
+    <g class="diya-fire">
+      <ellipse class="diya-halo" cx="18" cy="12" rx="8" ry="10" fill="#ffb428" opacity=".4"/>
+      <g class="diya-flame"><path d="M18 2c-1 6-7 9-5 14 2 6 11 4 10-2-1-4-5-6-5-12Z" fill="#f6a11a"/>
+      <path d="M18 10c0 3-3 5-2 7 1 3 5 2 5-1 0-2-2-3-3-6Z" fill="#fff2b1"/></g>
+    </g>
+    <path class="diya-bowl" d="M3 22q15 4 30 0c-2 7-8 9-15 9S5 29 3 22Z"/>
+    <path d="M3 22q15 4 30 0M10 27l1 1m6-1 1 1m6-1 1 1" fill="none" stroke="#c99555" stroke-width="1.2" stroke-linecap="round"/>
+  </svg>`).join('');
   let pieces = [], geo, drag = null, zTop = 10, cover;
+  const puzzleImage = new Image();
+  const puzzleImageReady = new Promise((resolve, reject) => {
+    puzzleImage.onload = resolve;
+    puzzleImage.onerror = () => reject(new Error('The puzzle image could not be loaded.'));
+  });
+  puzzleImage.src = 'assets/puzzle-image.png';
   addEventListener('temple-entered', () => { if (geo) build(); });
 
-  // ---- Cover artwork the puzzle is cut from (all drawn in code, in units of the board size S) ----
   function drawCover(g, S) {
-    const u = v => v * S, TAU = Math.PI * 2;
-    let seed = 20261122;
-    const rnd = () => (seed = seed * 16807 % 2147483647) / 2147483647; // seeded so the art is identical every load
-    const ell = (x, y, rx, ry, a = 0) => { g.beginPath(); g.ellipse(x, y, rx, ry, a, 0, TAU); };
-    const lin = (x0, y0, x1, y1, stops) => { const gr = g.createLinearGradient(x0, y0, x1, y1); stops.forEach((c, i) => gr.addColorStop(i / (stops.length - 1), c)); return gr; };
-    const rad = (x, y, r0, r1, stops) => { const gr = g.createRadialGradient(x, y, r0, x, y, r1); stops.forEach((c, i) => gr.addColorStop(i / (stops.length - 1), c)); return gr; };
-    const brass = (x, w) => lin(x - w, 0, x + w, 0, ['#5e3a0c', '#c8902c', '#fff1bd', '#e2b04e', '#9a6418', '#4a2c08']);
-    const shadow = (blur, dy, a = .4) => { g.shadowColor = `rgba(20,0,0,${a})`; g.shadowBlur = blur; g.shadowOffsetY = dy; };
-    const noShadow = () => { g.shadowColor = 'transparent'; };
-
-    // -- Flowers & leaves --
-    function marigold(x, y, r, yellow) {
-      const c = yellow ? ['#ffd43a', '#f0a90a', '#b97402'] : ['#ffa526', '#f07800', '#a94600'];
-      g.save(); shadow(r * .6, r * .25);
-      g.fillStyle = c[2]; ell(x, y, r, r); g.fill(); noShadow();
-      for (let ring = 0; ring < 4; ring++) {
-        const rr = r * (1 - ring * .22), cnt = 9 + (3 - ring) * 4;
-        for (let i = 0; i < cnt; i++) {
-          const a = i / cnt * TAU + ring * .5 + rnd() * .3;
-          g.fillStyle = (i + ring) % 3 ? c[0] : c[1];
-          ell(x + Math.cos(a) * rr * .6, y + Math.sin(a) * rr * .6, rr * .42, rr * .28, a); g.fill();
-        }
-      }
-      g.fillStyle = rad(x, y, 0, r * .3, [c[2], 'rgba(120,50,0,0)']); ell(x, y, r * .3, r * .3); g.fill();
-      g.fillStyle = rad(x - r * .35, y - r * .4, 0, r, ['rgba(255,255,220,.35)', 'rgba(255,255,220,0)']); ell(x, y, r, r); g.fill();
-      g.restore();
-    }
-    function jasmine(x, y, len, a) {
-      g.save(); g.translate(x, y); g.rotate(a); shadow(len * .3, len * .12, .3);
-      g.fillStyle = lin(0, -len * .25, 0, len * .25, ['#ffffff', '#f6f1e2', '#d9d0b8']);
-      ell(0, 0, len * .5, len * .2); g.fill(); noShadow();
-      g.fillStyle = '#9fbf62'; ell(-len * .48, 0, len * .1, len * .09); g.fill();
-      g.restore();
-    }
-    function jasmineFlower(x, y, r) {
-      g.save(); shadow(r * .5, r * .2, .3);
-      for (let i = 0; i < 5; i++) {
-        const a = i / 5 * TAU - Math.PI / 2;
-        g.fillStyle = '#fffdf5'; ell(x + Math.cos(a) * r * .5, y + Math.sin(a) * r * .5, r * .5, r * .26, a); g.fill();
-      }
-      noShadow(); g.fillStyle = '#e9d97a'; ell(x, y, r * .18, r * .18); g.fill();
-      g.restore();
-    }
-    function rose(x, y, r) {
-      g.save(); shadow(r * .6, r * .25);
-      g.fillStyle = rad(x - r * .2, y - r * .2, 0, r, ['#e2384a', '#a3101f', '#5c0610']); ell(x, y, r, r); g.fill(); noShadow();
-      g.strokeStyle = 'rgba(60,0,8,.7)'; g.lineWidth = r * .1;
-      for (let i = 0; i < 4; i++) { g.beginPath(); g.arc(x, y, r * (.25 + i * .18), i * 1.7, i * 1.7 + 2.6); g.stroke(); }
-      g.restore();
-    }
-    function leaf(x, y, len, a, w = .22) {
-      g.save(); g.translate(x, y); g.rotate(a); shadow(len * .15, len * .06, .35);
-      g.beginPath(); g.moveTo(0, 0);
-      g.bezierCurveTo(len * w, len * .25, len * w * .9, len * .72, 0, len);
-      g.bezierCurveTo(-len * w * .9, len * .72, -len * w, len * .25, 0, 0);
-      g.fillStyle = lin(-len * w, 0, len * w, 0, ['#2b5216', '#5f8f2e', '#86b04a', '#3d6a1f']); g.fill(); noShadow();
-      g.strokeStyle = 'rgba(200,230,150,.55)'; g.lineWidth = len * .025;
-      g.beginPath(); g.moveTo(0, len * .03); g.lineTo(0, len * .93); g.stroke();
-      g.restore();
-    }
-
-    // -- Lamps --
-    function gopuram(cx, base) {
-      g.save();
-      g.globalCompositeOperation = 'lighter';
-      g.fillStyle = rad(cx, base - u(.07), 0, u(.17), ['rgba(255,210,140,.18)', 'rgba(255,210,140,0)']);
-      g.fillRect(cx - u(.2), base - u(.25), u(.4), u(.3));
-      g.restore(); g.save();
-      shadow(u(.012), u(.004), .45);
-      const widths = [.25, .21, .172, .138, .108], th = u(.024);
-      widths.forEach((w, i) => {
-        const y0 = base - i * th, wb = u(w), wt = u(w - .016);
-        g.beginPath(); g.moveTo(cx - wb / 2, y0); g.lineTo(cx + wb / 2, y0); g.lineTo(cx + wt / 2, y0 - th); g.lineTo(cx - wt / 2, y0 - th); g.closePath();
-        g.fillStyle = lin(cx - wb / 2, 0, cx + wb / 2, 0, ['#8a5a14', '#f4cf73', '#e0aa48', '#b27a24', '#6b4410']); g.fill();
-        if (!i) noShadow();
-        g.fillStyle = '#6b4410'; g.fillRect(cx - wb / 2, y0 - u(.004), wb, u(.004));
-        g.fillStyle = 'rgba(255,240,190,.5)'; g.fillRect(cx - wt / 2, y0 - th, wt, u(.002));
-        const n = Math.max(3, Math.floor(w / .028)), step = wt / n;
-        for (let k = 0; k < n; k++) {
-          const nx = cx - wt / 2 + step * (k + .5), ny = y0 - u(.005);
-          g.fillStyle = '#4a0a10';
-          g.beginPath(); g.moveTo(nx - u(.0045), ny); g.lineTo(nx - u(.0045), ny - u(.01)); g.arc(nx, ny - u(.01), u(.0045), Math.PI, 0); g.lineTo(nx + u(.0045), ny); g.fill();
-          g.fillStyle = '#fff0b8'; ell(nx, ny - u(.0165), u(.0015), u(.0015)); g.fill();
-        }
-      });
-      const top = base - widths.length * th;
-      g.fillStyle = lin(cx - u(.06), 0, cx + u(.06), 0, ['#8a5a14', '#f4cf73', '#b27a24']);
-      g.fillRect(cx - u(.055), top - u(.016), u(.11), u(.016));
-      ell(cx - u(.055), top - u(.008), u(.008), u(.008)); g.fill();
-      ell(cx + u(.055), top - u(.008), u(.008), u(.008)); g.fill();
-      g.fillStyle = brass(cx, u(.05));
-      for (let k = -2; k <= 2; k++) {
-        const kx = cx + k * u(.021);
-        ell(kx, top - u(.022), u(.0055), u(.006)); g.fill();
-        g.beginPath(); g.moveTo(kx - u(.002), top - u(.027)); g.lineTo(kx, top - u(.036)); g.lineTo(kx + u(.002), top - u(.027)); g.fill();
-      }
-      g.fillStyle = '#2a0508';
-      g.beginPath(); g.moveTo(cx - u(.02), base); g.lineTo(cx - u(.02), base - u(.024)); g.arc(cx, base - u(.024), u(.02), Math.PI, 0); g.lineTo(cx + u(.02), base); g.fill();
-      g.strokeStyle = '#f4cf73'; g.lineWidth = u(.003); g.stroke();
-      g.restore();
-    }
-    function rosette(x, y, r) {
-      g.save(); shadow(r * .4, r * .15);
-      g.fillStyle = rad(x - r * .3, y - r * .3, 0, r * 1.2, ['#fff1bd', '#e2b04e', '#8a5a14']); ell(x, y, r, r); g.fill(); noShadow();
-      g.strokeStyle = '#6b4410'; g.lineWidth = r * .06; g.stroke();
-      for (let i = 0; i < 8; i++) {
-        const a = i / 8 * TAU;
-        g.fillStyle = i % 2 ? '#7B0712' : '#a3172a';
-        ell(x + Math.cos(a) * r * .52, y + Math.sin(a) * r * .52, r * .32, r * .16, a); g.fill();
-      }
-      g.fillStyle = rad(x - r * .1, y - r * .1, 0, r * .3, ['#fff6d0', '#d9a144']); ell(x, y, r * .26, r * .26); g.fill();
-      g.restore();
-    }
-    const eachSide = fn => { for (let k = 0; k < 4; k++) { g.save(); g.translate(S / 2, S / 2); g.rotate(k * Math.PI / 2); g.translate(-S / 2, -S / 2); fn(); g.restore(); } };
-
-    // 1. Maroon silk with sheen, weave and faint mango buttas.
-    g.fillStyle = rad(u(.5), u(.45), u(.05), u(.8), ['#b51b30', '#7f0b1a', '#3a0208']); g.fillRect(0, 0, S, S);
-    g.save(); g.globalAlpha = .05; g.strokeStyle = '#ffd9a0'; g.lineWidth = Math.max(.5, u(.0015));
-    for (let i = -1; i < 1.6; i += .011) { g.beginPath(); g.moveTo(u(i), 0); g.lineTo(u(i - .6), S); g.stroke(); }
-    g.restore();
-    g.save(); g.fillStyle = 'rgba(240,190,90,.09)';
-    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
-      const x = u(.14 + c * .105 + (r % 2) * .052), y = u(.14 + r * .105), s = u(.022);
-      g.save(); g.translate(x, y); g.rotate(.5);
-      g.beginPath(); g.moveTo(0, -s); g.bezierCurveTo(s * .95, -s * .5, s * .85, s * .75, 0, s * .6);
-      g.bezierCurveTo(-s * .7, s * .5, -s * .65, -s * .1, -s * .1, -s * .25); g.bezierCurveTo(s * .15, -s * .55, -s * .2, -s * .8, 0, -s); g.fill();
-      g.restore();
-    }
-    g.restore();
-
-    // 2. Rangoli kolam behind the names.
-    const kx = u(.5), ky = u(.55);
-    g.save(); g.lineWidth = u(.0032);
-    for (let i = 0; i < 12; i++) {
-      const a = i / 12 * TAU;
-      g.fillStyle = i % 2 ? 'rgba(255,120,150,.10)' : 'rgba(255,200,60,.12)';
-      g.strokeStyle = 'rgba(243,210,122,.3)';
-      ell(kx + Math.cos(a) * u(.22), ky + Math.sin(a) * u(.22), u(.075), u(.03), a); g.fill(); g.stroke();
-    }
-    g.strokeStyle = 'rgba(243,210,122,.22)';
-    for (let i = 0; i < 8; i++) { const a = i / 8 * TAU + .39; ell(kx + Math.cos(a) * u(.1), ky + Math.sin(a) * u(.1), u(.065), u(.03), a); g.stroke(); }
-    g.fillStyle = 'rgba(255,240,200,.35)';
-    for (let i = 0; i < 60; i++) { const a = i / 60 * TAU; ell(kx + Math.cos(a) * u(.315), ky + Math.sin(a) * u(.315), u(.0028), u(.0028)); g.fill(); }
-    g.restore();
-
-    // 3. Vignette, then the temple tower.
-    g.fillStyle = rad(u(.5), u(.5), u(.3), u(.75), ['rgba(20,0,0,0)', 'rgba(20,0,0,.5)']); g.fillRect(0, 0, S, S);
-    gopuram(u(.5), u(.335));
-
-    // 4. Strewn petals.
-    for (let i = 0; i < 26; i++) {
-      const x = u(.3 + rnd() * .4), y = u(.855 + rnd() * .035), a = rnd() * TAU;
-      g.save(); shadow(u(.004), u(.002), .35);
-      g.fillStyle = i % 3 ? (i % 2 ? '#f39a12' : '#ffc12e') : '#b3142a';
-      ell(x, y, u(.008), u(.005), a); g.fill(); g.restore();
-    }
-    jasmineFlower(u(.33), u(.88), u(.012));
-    jasmineFlower(u(.675), u(.884), u(.011));
-    rose(u(.452), u(.888), u(.008));
-    rose(u(.548), u(.89), u(.008));
-
-    // 5. Text in gold foil.
-    g.save(); g.textAlign = 'center'; g.textBaseline = 'middle';
-    shadow(u(.012), u(.004), .55);
-    g.fillStyle = '#f8e7c7'; g.font = `600 ${u(.03)}px "Noto Serif", Georgia, serif`;
-    g.fillText('W E D D I N G   I N V I T A T I O N', kx, u(.385));
-    const foil = y => lin(0, y - u(.06), 0, y + u(.06), ['#fff6cf', '#f1c75a', '#c38a2a', '#f6d98a']);
-    g.font = `700 ${u(.125)}px "Cormorant Garamond", Georgia, serif`;
-    g.fillStyle = foil(u(.47)); g.fillText('Lokesh', kx, u(.47));
-    g.fillStyle = foil(u(.63)); g.fillText('Haripriya', kx, u(.63));
-    g.fillStyle = '#ffb02e'; g.font = `italic 600 ${u(.075)}px "Cormorant Garamond", Georgia, serif`;
-    g.fillText('&', kx, u(.55));
-    g.fillStyle = '#f3d27a'; g.font = `600 ${u(.045)}px "Noto Serif", Georgia, serif`;
-    g.fillText('21 · 22 November 2026', kx, u(.745));
-    g.fillStyle = '#f8e7c7'; g.font = `400 ${u(.036)}px "Noto Serif", Georgia, serif`;
-    g.fillText('Banyan Palace · Chennai', kx, u(.795));
-    noShadow();
-    g.strokeStyle = '#e2b04e'; g.lineWidth = u(.003);
-    g.beginPath(); g.moveTo(u(.35), u(.695)); g.lineTo(u(.47), u(.695)); g.moveTo(u(.53), u(.695)); g.lineTo(u(.65), u(.695)); g.stroke();
-    g.fillStyle = '#e2b04e';
-    g.beginPath(); g.moveTo(kx, u(.682)); g.lineTo(u(.513), u(.695)); g.lineTo(kx, u(.708)); g.lineTo(u(.487), u(.695)); g.fill();
-    [.34, .66].forEach(x => { ell(u(x), u(.695), u(.004), u(.004)); g.fill(); });
-    g.restore();
-
-    // 6. Hanging jasmine strands down both sides.
-    [.125, .875].forEach(sx => {
-      g.strokeStyle = 'rgba(230,220,190,.6)'; g.lineWidth = u(.0015);
-      g.beginPath(); g.moveTo(u(sx), u(.11)); g.quadraticCurveTo(u(sx + (sx < .5 ? .008 : -.008)), u(.32), u(sx), u(.52)); g.stroke();
-      for (let i = 0, y = .125; y < .51; i++, y += .0145) {
-        const x = u(sx + Math.sin(y * 9) * .004);
-        if (i % 7 === 6) rose(x, u(y), u(.009));
-        else jasmine(x, u(y), u(.022), (i % 2 ? 1 : -1) * 1.05 + Math.PI / 2);
-      }
-      marigold(u(sx), u(.53), u(.014), true);
-      g.fillStyle = brass(u(sx), u(.006)); ell(u(sx), u(.552), u(.005), u(.007)); g.fill();
-    });
-
-    // 7. Thoranam: mango leaves on a cord with marigold + jasmine swags.
-    g.strokeStyle = '#6b4410'; g.lineWidth = u(.004);
-    g.beginPath(); g.moveTo(u(.1), u(.108)); g.lineTo(u(.9), u(.108)); g.stroke();
-    for (let x = .115; x < .89; x += .034) leaf(u(x), u(.106), u(.075), (rnd() - .5) * .35);
-    const joins = [.11, .37, .63, .89];
-    for (let k = 0; k < 3; k++) {
-      const x0 = joins[k], x1 = joins[k + 1];
-      for (let i = 0; i <= 12; i++) {
-        const t = i / 12, x = u(x0 + (x1 - x0) * t), y = u(.115 + .045 * Math.sin(Math.PI * t));
-        if (i % 2) { jasmine(x, y - u(.006), u(.02), -.6); jasmine(x, y + u(.006), u(.02), .6); }
-        else marigold(x, y, u(.0165), k === 1);
-      }
-    }
-    [.37, .63].forEach(x => {
-      [.135, .162, .189].forEach((y, i) => marigold(u(x), u(y), u(.014 - i * .002), i % 2 === 1));
-      rose(u(x), u(.212), u(.01));
-      leaf(u(x), u(.22), u(.03), 0, .3);
-    });
-
-    // 8. Kanjivaram zari border with temple-tower triangles and lotus rosettes.
-    g.save();
-    g.lineWidth = u(.045);
-    g.strokeStyle = lin(0, 0, S, S, ['#8a5a14', '#f3d27a', '#b9822a', '#f6dc8c', '#9a6418', '#f3d27a', '#8a5a14']);
-    g.strokeRect(u(.0425), u(.0425), u(.915), u(.915));
-    g.restore();
-    eachSide(() => {
-      g.strokeStyle = '#5e3a0c'; g.lineWidth = Math.max(1, u(.002));
-      g.beginPath(); g.moveTo(u(.02), u(.021)); g.lineTo(u(.98), u(.021)); g.moveTo(u(.065), u(.064)); g.lineTo(u(.935), u(.064)); g.stroke();
-      for (let x = .09; x < .92; x += .035) {
-        g.fillStyle = '#6b0612';
-        g.beginPath(); g.moveTo(u(x), u(.033)); g.lineTo(u(x + .009), u(.0425)); g.lineTo(u(x), u(.052)); g.lineTo(u(x - .009), u(.0425)); g.fill();
-        g.fillStyle = '#fff1bd'; ell(u(x), u(.0425), u(.0022), u(.0022)); g.fill();
-        g.fillStyle = '#6b0612'; ell(u(x + .0175), u(.0425), u(.0025), u(.0025)); g.fill();
-      }
-      for (let x = .08; x < .92; x += .028) {
-        g.beginPath(); g.moveTo(u(x), u(.065)); g.lineTo(u(x + .014), u(.088)); g.lineTo(u(x + .028), u(.065)); g.closePath();
-        g.fillStyle = lin(0, u(.065), 0, u(.088), ['#f6dc8c', '#b9822a']); g.fill();
-        g.strokeStyle = '#6b4410'; g.lineWidth = Math.max(.5, u(.0012)); g.stroke();
-        g.fillStyle = '#7B0712'; ell(u(x + .014), u(.072), u(.0025), u(.0025)); g.fill();
-      }
-    });
-    g.strokeStyle = 'rgba(243,210,122,.55)'; g.lineWidth = u(.0025);
-    g.strokeRect(u(.098), u(.098), u(.804), u(.804));
-    [[.0425, .0425], [.9575, .0425], [.0425, .9575], [.9575, .9575]].forEach(([x, y]) => rosette(u(x), u(y), u(.038)));
+    g.drawImage(puzzleImage, 0, 0, S, S);
   }
 
   // Jigsaw edge from (x0,y0) to (x1,y1). Clockwise traversal → normal points inward; s=-1 bulges out, s=1 in.
@@ -543,6 +349,7 @@
   }
 
   function build(keep = new Set()) {
+    if (!puzzleImage.complete || !puzzleImage.naturalWidth) return;
     const mobile = innerWidth <= 600;
     const SW = Math.max(220, Math.min(stage.parentElement.clientWidth - (mobile ? 20 : 40), mobile ? 560 : 520));
     const S = mobile ? SW - 16 : SW * .64, cell = S / n, t = .22 * cell, W = cell + 2 * t;
@@ -561,6 +368,7 @@
     cg.scale(dpr, dpr);
     drawCover(cg, S);
     for (const el of [board, $('shine')]) Object.assign(el.style, { left: boardX + 'px', top: boardY + 'px', width: S + 'px', height: S + 'px' });
+    Object.assign($('board-frame').style, { left: boardX - 9 + 'px', top: boardY - 9 + 'px', width: S + 'px', height: S + 'px' });
     board.width = board.height = S * dpr;
 
     const H = Array.from({ length: n - 1 }, () => Array.from({ length: n }, rnd));
@@ -581,7 +389,7 @@
       const cv = document.createElement('canvas');
       cv.width = cv.height = Math.ceil(W * dpr);
       cv.style.width = cv.style.height = W + 'px';
-      const g = cv.getContext('2d', { willReadFrequently: true });
+      const g = cv.getContext('2d');
       g.scale(dpr, dpr);
 
       const el = document.createElement('button');
@@ -641,6 +449,8 @@
   function update(animate) {
     if (!stage.classList.contains('done')) drawBoard();
     const done = pieces.filter(p => p.placed).length, total = n * n;
+    diyaProgress.querySelectorAll('.progress-diya').forEach((diya, i) => diya.classList.toggle('is-lit', i < done));
+    diyaProgress.setAttribute('aria-valuenow', String(done));
     if (done === total) complete(animate);
   }
 
@@ -696,7 +506,7 @@
     INVITE.toast('Solve the puzzle to untie the scroll');
   });
 
-  // Pick the topmost unplaced piece whose actual (non-transparent) pixels are under the pointer.
+  // Use the jigsaw path for picking, including when local image canvases disallow pixel reads.
   function pieceAt(x, y) {
     const R = stage.getBoundingClientRect();
     for (const el of document.elementsFromPoint(x, y)) {
@@ -707,7 +517,7 @@
       const lx = (dx * Math.cos(angle) - dy * Math.sin(angle) + half) * dpr;
       const ly = (dx * Math.sin(angle) + dy * Math.cos(angle) + half) * dpr;
       if (lx < 0 || ly < 0 || lx >= p.g.canvas.width || ly >= p.g.canvas.height) continue;
-      if (p.g.getImageData(lx, ly, 1, 1).data[3] > 10) return p;
+      if (p.g.isPointInPath(p.path, lx, ly)) return p;
     }
   }
 
@@ -763,17 +573,19 @@
     build._t = setTimeout(() => build(new Set(pieces.filter(p => p.placed).map(p => p.r * n + p.c))), 200);
   });
 
-  // Draw once webfonts are ready so the names on the pieces use the invitation typeface.
-  Promise.race([
-    Promise.all(['700 40px "Cormorant Garamond"', 'italic 600 40px "Cormorant Garamond"', '600 20px "Noto Serif"'].map(f => document.fonts.load(f))),
-    new Promise(r => setTimeout(r, 2000)),
-  ]).finally(() => {
+  // Wait for the supplied artwork before cutting its sixteen pieces.
+  puzzleImageReady.then(() => {
     lastW = stage.parentElement.clientWidth;
     build();
     // Preview control: puzzle.html?solved fills every piece in turn so you can check the finished state.
     if (new URLSearchParams(location.search).has('solved')) {
       pieces.filter(p => !p.placed).forEach((p, i) => setTimeout(() => { p.el.style.zIndex = ++zTop; place(p); }, 900 + i * 120));
     }
+  }).catch(() => {
+    const message = document.createElement('p');
+    message.setAttribute('role', 'alert');
+    message.textContent = 'The puzzle image could not load. Please refresh to try again.';
+    stage.replaceChildren(message);
   });
 </script>
 </body>

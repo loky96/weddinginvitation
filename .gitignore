@@ -5,5 +5,7 @@ __MACOSX/
 .impeccable/
 .taste-skill/
 node_modules/
+dist/
+.netlify/
 .env
 .env.*

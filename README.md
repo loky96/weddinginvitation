@@ -1,35 +1,31 @@
-# Lokesh & Haripriya — Digital Wedding Invitation
+# Lokesh & Haripriya — Wedding Invitation
 
-Static site, no build step. Three versions share one data/renderer file:
+A static wedding invitation with a scroll-controlled South Indian temple entrance, a 16-piece photo puzzle, diya progress lights, kolam backgrounds, and an unrolling invitation scroll.
 
-| File | Version | Interactions |
-|---|---|---|
-| `doors.html` | Temple Doors (recommended) | Tap/Enter opens carved doors, petal burst, temple bell (sound toggle), brass lamps light as each section arrives |
-| `garland.html` | Garland Reveal | Drag garland down (or tap button) to reveal names, tap-to-reveal event cards, gopuram tile reveals QR, flower pops |
-| `scroll.html` | Wedding Scroll | Kolam draws itself, diya on/off, parchment panels unroll on scroll, temple tile reveals QR |
-| `hanging-scroll.html` | Silk & Sakura Scroll (Japanese × South Indian) | Swaying kakejiku in Kanjivaram silk; untie the mizuhiki cord, sakura + jasmine petals fall and the scroll unrolls down; hanko 寿 seal stamps, ink-brush kolam draws per section |
-| `puzzle.html` | Jigsaw Puzzle | 4×4 puzzle of the cover art: phone screens place all pieces below the board; larger screens scatter them around it. Pieces tilt as you drag and snap onto faint dotted outlines. Solving reveals the art, then the tied parchment scroll unrolls the invitation. Enter places a focused piece |
-| `index.html` | Main entry | Opens the jigsaw invitation directly; scrolling pans from the temple tower down to its entrance, zooms into the doorway, opens the doors, and fades into the puzzle |
+## Files
 
-All content lives in `invite.js` (`INVITE` object). Shared styles: `base.css`. The tied, unrolling scroll (`tied-scroll.css` + `INVITE.unroll()`) is shared by the hanging-scroll and puzzle versions.
-
-Every version: calendar (21/22 tap focuses event), Google Calendar + .ics, venue QR (generated from the maps URL), Google Maps, native share / copy link / WhatsApp, "Send your blessings" via WhatsApp, reduced-motion support.
+- `puzzle.html`: invitation and puzzle layout.
+- `temple-scene.js`: temple pan, doorway zoom, and door animation.
+- `invite.js`: names, dates, venue, calendar links, and shared artwork.
+- `assets/puzzle-image.png`: artwork cut into the puzzle pieces.
+- `base.css` and `tied-scroll.css`: shared styling.
 
 ## Preview locally
 
-    python3 -m http.server 8123
+Run `python -m http.server 8123` in this folder, then open http://localhost:8123/.
 
-Open http://localhost:8123/
+## Deploy on Netlify
 
-## Publish (free)
+1. Sign in at https://app.netlify.com/ and choose **Add new project → Import an existing project**.
+2. Connect GitHub and grant Netlify access to `loky96/weddinginvitation`.
+3. Select the `main` branch. Leave the base directory empty: the site lives at the repository root.
+4. Netlify reads `netlify.toml`: build command `node scripts/build-site.cjs`, publish directory `dist`.
+5. Deploy the project. If it is private by default, change the Netlify project visibility to public before sharing its URL.
 
-- Netlify Drop: drag this folder onto https://app.netlify.com/drop
-- GitHub Pages: push to a repo, Settings → Pages → deploy from branch
+The GitHub repository stays private. Only the files copied into `dist` are published. Future pushes to `main` update the linked Netlify site.
 
-Share the link to the version you want, e.g. `https://<site>/doors.html`.
+For a manual upload, run `node scripts/build-site.cjs` and upload the generated `dist` folder to Netlify Drop.
 
-## Before sending
+## Checks
 
-- Scan the QR on Android + iPhone; confirm the pin is Banyan Palace - Mukunda Hall.
-- Reception calendar entry uses a 2-hour placeholder end time (the invitation says "7.00 pm onwards").
-- WhatsApp link previews need an `og:image` (1200×630 JPG) — add `<meta property="og:image" content="https://<site>/preview.jpg">` to each page once you have the artwork.
+Run `node --test tests/*.test.cjs` and `node scripts/build-site.cjs` before publishing.
