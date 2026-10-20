@@ -15,9 +15,11 @@
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="tied-scroll.css">
 <style>
+  body.theme-puzzle { background-color: #faf0dc;
+    background-image: url('assets/kolam-pattern.svg'), url('assets/paper-texture.svg'); background-size: 320px 320px, 192px 192px; }
   .kolam-background { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity .8s; }
   body.entered .kolam-background { opacity: 1; }
-  .kolam-background .kolam { position: absolute; width: clamp(230px, 38vw, 460px); height: auto; opacity: .1; }
+  .kolam-background .kolam { position: absolute; width: clamp(230px, 38vw, 460px); height: auto; opacity: .045; }
   .kolam-background .k-lines * { stroke: var(--maroon); stroke-width: 1.1; }
   .kolam-background .k-dots { fill: var(--gold); }
   .kolam-background .kolam:nth-child(1) { top: -65px; left: -90px; transform: rotate(12deg); }
@@ -109,13 +111,14 @@
   .scroll-wrap .hang { width: min(100% - 56px, 520px); }
   .scroll-wrap .knot .label { border: 0; border-radius: 0; background: transparent; box-shadow: none;
     padding: 6px 4px; font: italic 600 1.15rem/1.35 var(--serif); color: var(--maroon); animation: none; }
+  .paper { background-color: #fbf4e6; background-image: url('assets/paper-texture.svg'); background-size: 192px 192px; }
   /* Sleek typesetting inside the scroll: smaller, airier type, quiet dividers, no boxes. */
   .paper { --paisley: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 3c9 0 15 7 15 15 0 10-9 17-17 19C9 34 4 26 6 17 8 9 13 3 20 3z' fill='none' stroke='%23C58B30' stroke-width='1.4'/%3E%3Cpath d='M20 9c5 0 9 4 9 9 0 6-5 10-10 11-5-2-8-7-7-12 1-4 4-8 8-8z' fill='none' stroke='%23B32A1C' stroke-width='1'/%3E%3Ccircle cx='19' cy='19' r='2.2' fill='%23C58B30'/%3E%3Cpath d='M18 33l-4 4M22 33l4 4' stroke='%23587A37' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); }
   .paper .festoon { height: 40px; margin: 0 -16px; }
   .paper .suzhi { font: 600 1.4rem/1 'Noto Serif Tamil', serif; color: var(--maroon); text-align: center; margin: 6px 0 0; }
   .paper main { position: relative; margin: 10px 10px 0; padding: 18px 8px 10px; font-size: 14.5px; line-height: 1.6;
     border: 1px solid rgba(197,139,48,.6); outline: 1px solid rgba(197,139,48,.3); outline-offset: 3px;
-    background: radial-gradient(rgba(179,42,28,.22) .7px, transparent 1.1px) 0 0 / 14px 14px; }
+    background: transparent; }
   .paper .sec { padding: 22px 0 26px; }
   .paper .divider { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--gold); margin: -6px 0; }
   .paper .divider::before, .paper .divider::after { content: ''; flex: 1; max-width: 70px; height: 1px;
@@ -137,7 +140,7 @@
     background: conic-gradient(from 135deg at 50% 0, var(--gold) 90deg, transparent 0) 0 0 / 8px 6px; opacity: .7; }
   .paper .venue-arch { display: flex; justify-content: center; margin-bottom: -4px; }
   .paper .venue-arch .gopuram { width: 64px; }
-  .paper .qr { padding: 10px; background: radial-gradient(circle, var(--verm) 1.2px, transparent 1.6px) 0 0 / 10px 10px; border-radius: 6px; }
+  .paper .qr { padding: 10px; background: #fffaf0; border: 1px solid #c58b3040; border-radius: 6px; }
   .paper .qr svg { background: #fffaf0; border-radius: 3px; }
   .paper .lotus-end { display: block; width: 70px; margin: 14px auto 0; }
   .paper p, .paper h3 { text-wrap: balance; }
@@ -160,7 +163,7 @@
   .paper .when { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .paper .chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px 6px 10px; border-radius: 999px;
     border: 1px solid rgba(197,139,48,.55); font-size: .86rem; color: var(--brown);
-    background: radial-gradient(rgba(197,139,48,.2) .8px, transparent 1.2px) 0 0 / 6px 6px, #fffaf0;
+    background: url('assets/paper-texture.svg') 0 0 / 192px 192px, #fffaf0;
     box-shadow: inset 0 0 0 3px #fffaf0, inset 0 0 0 4px rgba(197,139,48,.25); }
   .paper .chip + .chip { color: var(--maroon); font-weight: 600; }
   .paper .chip svg { width: 22px; height: 22px; flex: none; }

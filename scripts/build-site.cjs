@@ -7,6 +7,7 @@ const files = [
   'invite.js', 'temple-scene.js',
   'assets/temple-entrance.png', 'assets/temple-doors.png',
   'assets/puzzle-image.png', 'assets/puzzle-border.svg',
+  'assets/kolam-pattern.svg', 'assets/paper-texture.svg',
 ];
 
 for (const file of files) {
