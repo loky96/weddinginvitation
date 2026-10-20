@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#7B0712">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Great+Vibes&family=Noto+Serif:wght@400;600&family=Noto+Serif+Tamil:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Noto+Serif:wght@400;600&family=Noto+Serif+Tamil:wght@600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="tied-scroll.css">
 <style>
@@ -56,7 +56,10 @@
   .game { max-width: 600px; margin: 0 auto; padding: clamp(20px, 4vh, 40px) 20px 12px; text-align: center; }
   @media (max-width: 600px) { .game { padding-left: 10px; padding-right: 10px; } }
   .puzzle-heading { max-width: 460px; margin: 0 auto 10px; }
-  .game h1 { font: 400 clamp(1.55rem, 4.8vw, 2rem)/1.45 'Great Vibes', 'Brush Script MT', cursive; margin: 0; text-wrap: balance; }
+  .game h1 { font: italic 600 clamp(1.2rem, 4.2vw, 1.55rem)/1.4 var(--serif); margin: 0; text-wrap: balance; }
+  #g-title:focus { outline: none; }
+  .heading-ornament { display: flex; justify-content: center; margin: 5px 0 0; color: var(--gold); }
+  .heading-ornament svg { width: 48px; height: 25px; }
   .diya-progress { display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); gap: 3px; max-width: 360px; margin: 0 auto 6px; }
   .progress-diya { display: block; width: 100%; height: auto; overflow: visible; }
   .diya-bowl { fill: #a97a61; opacity: .45; transition: fill .4s, opacity .4s; }
@@ -213,6 +216,7 @@
 <section class="game" aria-labelledby="g-title" inert>
   <div class="puzzle-heading">
     <h1 id="g-title" tabindex="-1">Piece together our beginning.</h1>
+    <div class="heading-ornament" aria-hidden="true"></div>
   </div>
   <div class="diya-progress" id="diya-progress" role="progressbar" aria-label="Puzzle pieces placed" aria-valuemin="0" aria-valuemax="16" aria-valuenow="0"></div>
   <div class="stage" id="stage">
@@ -270,6 +274,7 @@
   // a gopuram over the venue, and a closing lotus.
   const LOTUS = '<svg viewBox="0 0 92 48" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M46 44c-10-6-14-16-12-30 6 8 10 18 12 30zM46 44c10-6 14-16 12-30-6 8-10 18-12 30zM46 44c-4-12-2-24 0-34 2 10 4 22 0 34z"/><path d="M46 44c-14 0-24-6-30-16 10 2 20 8 30 16zM46 44c14 0 24-6 30-16-10 2-20 8-30 16z"/><path d="M14 44h64" stroke-width="1.2"/></g><circle cx="46" cy="44" r="2.4" fill="#B32A1C"/></svg>';
   const paper = document.querySelector('.paper');
+  document.querySelector('.heading-ornament').innerHTML = LOTUS;
   paper.insertAdjacentHTML('afterbegin', '<div class="festoon" aria-hidden="true"></div><p class="suzhi" lang="ta" aria-hidden="true">உ</p>');
   $main.querySelectorAll('.sec + .sec').forEach(sec => sec.insertAdjacentHTML('beforebegin', `<div class="divider" aria-hidden="true">${LOTUS}</div>`));
   $main.querySelectorAll('.ev-title').forEach(t => t.insertAdjacentHTML('afterend', '<span class="ev-row" aria-hidden="true"></span>'));
