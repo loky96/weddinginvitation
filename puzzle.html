@@ -104,6 +104,8 @@
   .scroll-wrap { padding: 14px 20px 80px; }
   .scroll-wrap:has(.hang:not(.untied)) { padding-bottom: calc(240px + env(safe-area-inset-bottom)); }
   .scroll-wrap .hang { width: min(100% - 56px, 520px); }
+  .scroll-wrap .knot .label { border: 0; border-radius: 0; background: transparent; box-shadow: none;
+    padding: 6px 4px; font: italic 600 1.15rem/1.35 var(--serif); color: var(--maroon); animation: none; }
   /* Sleek typesetting inside the scroll: smaller, airier type, quiet dividers, no boxes. */
   .paper { --paisley: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 3c9 0 15 7 15 15 0 10-9 17-17 19C9 34 4 26 6 17 8 9 13 3 20 3z' fill='none' stroke='%23C58B30' stroke-width='1.4'/%3E%3Cpath d='M20 9c5 0 9 4 9 9 0 6-5 10-10 11-5-2-8-7-7-12 1-4 4-8 8-8z' fill='none' stroke='%23B32A1C' stroke-width='1'/%3E%3Ccircle cx='19' cy='19' r='2.2' fill='%23C58B30'/%3E%3Cpath d='M18 33l-4 4M22 33l4 4' stroke='%23587A37' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); }
   .paper .festoon { height: 40px; margin: 0 -16px; }
