@@ -7,12 +7,14 @@ A static wedding invitation with a scroll-controlled South Indian temple entranc
 - `puzzle.html`: invitation and puzzle layout.
 - `temple-scene.js`: temple pan, doorway zoom, and door animation.
 - `invite.js`: names, dates, venue, calendar links, and shared artwork.
-- `assets/puzzle-image.png`: artwork cut into the puzzle pieces.
+- `puzzle-images/`: photos randomly selected for each new page visit; the original `assets/puzzle-image.png` is a fallback.
 - `base.css` and `tied-scroll.css`: shared styling.
 
 ## Preview locally
 
 Run `python -m http.server 8123` in this folder, then open http://localhost:8123/.
+
+After adding photos to `puzzle-images/`, run `node scripts/build-site.cjs` to update the image list for local preview. Netlify updates the list automatically during its build. PNG, JPG, WebP, and AVIF files are supported. Images are kept in proportion without cropping.
 
 ## Deploy on Netlify
 
