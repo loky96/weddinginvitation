@@ -140,8 +140,8 @@
   .paper .ev-title + .ev-hint { display: none; }
   .paper .ev-row { display: block; width: 72px; height: 6px; margin: 4px auto 10px;
     background: conic-gradient(from 135deg at 50% 0, var(--gold) 90deg, transparent 0) 0 0 / 8px 6px; opacity: .7; }
-  .paper .venue-arch { display: flex; justify-content: center; margin-bottom: -4px; }
-  .paper .venue-arch .gopuram { width: 64px; }
+  .paper .event-illustration { display: block; width: clamp(120px, 38vw, 180px); max-width: 100%; height: auto;
+    aspect-ratio: 1; object-fit: contain; margin: 8px auto 14px; }
   .paper .qr { padding: 10px; background: #fffaf0; border: 1px solid #c58b3040; border-radius: 6px; }
   .paper .qr svg { background: #fffaf0; border-radius: 3px; }
   .paper .lotus-end { display: block; width: 70px; margin: 14px auto 0; }
@@ -281,19 +281,26 @@
         <span class="chip"><span class="sr-only">Date: </span>${ICON.date}<span>${ev.displayDate}</span></span>
         <span class="chip"><span class="sr-only">Time: </span>${ICON.time}<span>${ev.displayTime}</span></span>
       </div>`;
+    const picture = document.createElement('img');
+    picture.className = 'event-illustration';
+    picture.src = ev.id === 'reception' ? 'assets/reception-illustration.png' : 'assets/wedding-illustration.png';
+    picture.alt = ev.id === 'reception'
+      ? 'Bride and groom in modern formalwear posing for a reception photograph'
+      : 'Bride and groom seated beside the sacred homam fire during their wedding ceremony';
+    picture.width = picture.height = 320;
+    picture.loading = 'lazy';
+    card.querySelector('.when').before(picture);
     card.querySelectorAll('a[download], .note').forEach(el => el.remove());
     card.querySelector('.btn').textContent = 'Add to Calendar';
   });
   document.querySelector('.temple-interior').insertAdjacentHTML('afterbegin', INVITE.art.kolam);
-  // Traditional ornaments: thoranam + Pillaiyar suzhi at the top, lotus dividers,
-  // a gopuram over the venue, and a closing lotus.
+  // Traditional ornaments: thoranam, Pillaiyar suzhi, lotus dividers, and a closing lotus.
   const LOTUS = '<svg viewBox="0 0 92 48" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M46 44c-10-6-14-16-12-30 6 8 10 18 12 30zM46 44c10-6 14-16 12-30-6 8-10 18-12 30zM46 44c-4-12-2-24 0-34 2 10 4 22 0 34z"/><path d="M46 44c-14 0-24-6-30-16 10 2 20 8 30 16zM46 44c14 0 24-6 30-16-10 2-20 8-30 16z"/><path d="M14 44h64" stroke-width="1.2"/></g><circle cx="46" cy="44" r="2.4" fill="#B32A1C"/></svg>';
   const paper = document.querySelector('.paper');
   document.querySelector('.heading-ornament').innerHTML = LOTUS;
   paper.insertAdjacentHTML('afterbegin', '<div class="festoon" aria-hidden="true"></div><p class="suzhi" lang="ta" aria-hidden="true">உ</p>');
   $main.querySelectorAll('.sec + .sec').forEach(sec => sec.insertAdjacentHTML('beforebegin', `<div class="divider" aria-hidden="true">${LOTUS}</div>`));
   $main.querySelectorAll('.ev-title').forEach(t => t.insertAdjacentHTML('afterend', '<span class="ev-row" aria-hidden="true"></span>'));
-  $main.querySelector('.venue-name').insertAdjacentHTML('beforebegin', `<div class="venue-arch" aria-hidden="true">${INVITE.art.gopuram}</div>`);
   $main.querySelector('.blessing').insertAdjacentHTML('afterend', LOTUS.replace('class="', 'class="lotus-end ').replace('<svg ', '<svg class="lotus-end" style="color:var(--gold)" '));
 
   const hang = document.getElementById('hang'), knot = document.getElementById('knot');

@@ -14,6 +14,7 @@ const files = [
   'assets/temple-entrance.png', 'assets/temple-doors.png',
   'assets/puzzle-image.png', 'assets/puzzle-border.svg',
   'assets/kolam-pattern.svg', 'assets/paper-texture.svg',
+  'assets/reception-illustration.png', 'assets/wedding-illustration.png',
   'puzzle-images.js', ...images,
 ];
 
