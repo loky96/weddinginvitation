@@ -182,7 +182,8 @@
   .paper .kolam .k-lines * { stroke-dasharray: 1; stroke-dashoffset: 1; stroke-width: 3; }
   .paper .in .kolam .k-lines * { animation: draw 1.6s ease-in-out forwards .2s; }
   @keyframes draw { to { stroke-dashoffset: 0; } }
-  .hang:not(.untied) .knot { cursor: not-allowed; }
+  .hang:not(.untied) .knot { cursor: grab; touch-action: none; user-select: none; transform: translate(-50%, var(--pull, 0px)); transition: transform .25s ease; }
+  .hang:not(.untied) .knot.pulling { cursor: grabbing; transition: none; }
   .knot.nudge svg { animation: tug .5s ease-in-out; }
   @keyframes tug { 30% { transform: translateY(6px) rotate(-4deg); } 60% { transform: translateY(-2px) rotate(3deg); } }
   @media (prefers-reduced-motion: reduce) { .paper .kolam .k-lines * { stroke-dashoffset: 0; } }
@@ -229,7 +230,7 @@
     </div>
     <div class="roll">
       <span class="band" aria-hidden="true"></span>
-      <button class="knot" id="knot" type="button" aria-label="The scroll is tied. Solve the puzzle to untie it."><span class="label">Solve the puzzle to untie</span></button>
+      <button class="knot" id="knot" type="button" aria-label="Solve the puzzle, or pull down to untie the scroll. Keyboard: press Arrow Down to open." aria-keyshortcuts="ArrowDown"><span class="label">Solve the puzzle to untie</span></button>
     </div>
   </div>
 </section>
@@ -499,11 +500,54 @@
     }, delay);
   }
 
-  // Tied knot: before the puzzle is solved it just tugs back.
-  knot.addEventListener('click', () => {
+  // Pull the cord 80 CSS pixels to open early; shorter pulls spring back.
+  let knotPull = null, suppressKnotClick = false;
+  function finishKnotPull(open) {
+    if (!knotPull) return;
+    const { id, distance } = knotPull;
+    knotPull = null;
+    suppressKnotClick = open || distance > 8;
+    knot.classList.remove('pulling');
+    knot.style.removeProperty('--pull');
+    if (knot.hasPointerCapture(id)) knot.releasePointerCapture(id);
+    if (open) openScroll(0);
+  }
+  knot.addEventListener('pointerdown', e => {
+    if (e.button !== 0 || knotPull || hang.classList.contains('untied')) return;
+    e.preventDefault();
+    suppressKnotClick = false;
+    knotPull = { id: e.pointerId, startY: e.clientY, distance: 0 };
+    knot.setPointerCapture(e.pointerId);
+    knot.classList.add('pulling');
+  });
+  knot.addEventListener('pointermove', e => {
+    if (!knotPull || e.pointerId !== knotPull.id) return;
+    knotPull.distance = Math.max(0, e.clientY - knotPull.startY);
+    knot.style.setProperty('--pull', Math.min(knotPull.distance, 112) + 'px');
+    if (knotPull.distance >= 80) finishKnotPull(true);
+  });
+  knot.addEventListener('pointerup', e => {
+    if (!knotPull || e.pointerId !== knotPull.id) return;
+    finishKnotPull(Math.max(0, e.clientY - knotPull.startY) >= 80);
+  });
+  knot.addEventListener('pointercancel', e => {
+    if (knotPull && e.pointerId === knotPull.id) finishKnotPull(false);
+  });
+  knot.addEventListener('lostpointercapture', e => {
+    if (knotPull && e.pointerId === knotPull.id) finishKnotPull(false);
+  });
+  knot.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' && !hang.classList.contains('untied')) {
+      e.preventDefault();
+      openScroll(0);
+    }
+  });
+  knot.addEventListener('click', e => {
+    if (suppressKnotClick) { suppressKnotClick = false; e.preventDefault(); return; }
+    if (hang.classList.contains('untied')) return;
     if (stage.classList.contains('done')) return INVITE.unroll(hang);
     knot.classList.remove('nudge'); void knot.offsetWidth; knot.classList.add('nudge');
-    INVITE.toast('Solve the puzzle to untie the scroll');
+    INVITE.toast('Solve the puzzle, or pull the cord down to open');
   });
 
   // Use the jigsaw path for picking, including when local image canvases disallow pixel reads.
