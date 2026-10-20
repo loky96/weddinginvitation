@@ -6,9 +6,10 @@ const geometry = html.slice(html.indexOf('    const mobile = innerWidth'), html.
 const scatter = html.slice(html.indexOf('  function scatter('), html.indexOf('  function build('));
 
 test('the empty puzzle board leaves the page background visible', () => {
-  let cleared = false;
+  let cleared = false, outline;
   const canvas = {
     setTransform() {}, clearRect() { cleared = true; }, setLineDash() {},
+    strokeRect(...rect) { outline = rect; },
     fillRect() { throw Error('Board must not paint a separate background'); },
     createLinearGradient() { throw Error('Board must not use a gradient'); },
   };
@@ -16,6 +17,8 @@ test('the empty puzzle board leaves the page background visible', () => {
   vm.runInNewContext(html.slice(html.indexOf('  function drawBoard('), html.indexOf('  function update(')), context);
   context.drawBoard();
   assert.ok(cleared);
+  assert.deepEqual(outline, [.6, .6, 298.8, 298.8], 'outer dotted border stays inside the canvas instead of being clipped');
+  assert.equal(canvas.strokeStyle, 'rgba(123,7,18,.08)');
   assert.ok(!html.includes('board-frame'));
   assert.ok(!html.includes('temple-interior'));
 });

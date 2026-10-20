@@ -63,18 +63,15 @@
   .puzzle-heading { max-width: 460px; margin: 0 auto 10px; }
   .game h1 { font: italic 600 clamp(1.2rem, 4.2vw, 1.55rem)/1.4 var(--serif); margin: 0; text-wrap: balance; }
   #g-title:focus { outline: none; }
-  .heading-ornament { display: flex; justify-content: center; margin: 5px 0 0; color: var(--gold); }
+  .heading-ornament { display: flex; justify-content: center; margin: 0 0 5px; color: var(--gold); }
   .heading-ornament svg { width: 48px; height: 25px; }
-  .diya-progress { display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); gap: 3px; max-width: 360px; margin: 0 auto 6px; }
-  .progress-diya { display: block; width: 100%; height: auto; overflow: visible; }
-  .diya-bowl { fill: #a97a61; opacity: .45; transition: fill .4s, opacity .4s; }
-  .diya-fire { opacity: 0; transform: scale(.5); transform-origin: 18px 19px; transition: opacity .5s, transform .5s; }
-  .is-lit .diya-bowl { fill: #b95430; opacity: 1; }
-  .is-lit .diya-fire { opacity: 1; transform: scale(1); }
-  .diya-halo { filter: blur(3px); }
-  .is-lit .diya-flame { transform-origin: 18px 19px; animation: diya-flicker 2.7s ease-in-out var(--delay) infinite; }
-  @keyframes diya-flicker { 50% { transform: scale(.93, 1.07); } }
-  @media (prefers-reduced-motion: reduce) { .diya-fire, .diya-bowl { transition: none; } .is-lit .diya-flame { animation: none; } }
+  .footsteps-progress { position: relative; width: min(100%, 360px); height: 52px; margin: 0 auto 6px; }
+  .footstep { position: absolute; width: clamp(18px, 4.3vw, 23px); height: auto; opacity: 0;
+    transform: translateX(-50%) scale(.65); transition: opacity .45s ease-out, transform .45s ease-out; }
+  .footstep.bride { color: var(--maroon); }
+  .footstep.groom { color: #956b40; }
+  .footstep.is-visible { opacity: .9; transform: translateX(-50%) scale(1); }
+  @media (prefers-reduced-motion: reduce) { .footstep { transition: none; } }
   .skip-entrance:focus-visible { outline: 3px solid var(--marigold); outline-offset: 3px; }
 
   .stage { position: relative; margin: 0 auto; touch-action: manipulation; }
@@ -232,10 +229,10 @@
 <section class="game" aria-labelledby="g-title" inert>
   <div class="puzzle-border" aria-hidden="true"></div>
   <div class="puzzle-heading">
-    <h1 id="g-title" tabindex="-1">Piece together our beginning.</h1>
     <div class="heading-ornament" aria-hidden="true"></div>
+    <h1 id="g-title" tabindex="-1">Piece together our beginning.</h1>
   </div>
-  <div class="diya-progress" id="diya-progress" role="progressbar" aria-label="Puzzle pieces placed" aria-valuemin="0" aria-valuemax="16" aria-valuenow="0"></div>
+  <div class="footsteps-progress" id="footsteps-progress" role="progressbar" aria-label="Puzzle progress: bride and groom walking towards each other" aria-valuemin="0" aria-valuemax="16" aria-valuenow="0"></div>
   <div class="stage" id="stage">
     <canvas id="board" aria-hidden="true"></canvas>
     <div class="shine" id="shine" aria-hidden="true"></div>
@@ -316,16 +313,15 @@
   const stage = $('stage'), board = $('board');
   const dpr = Math.min(devicePixelRatio || 1, 2);
   const n = 4;
-  const diyaProgress = $('diya-progress');
-  diyaProgress.innerHTML = Array.from({ length: n * n }, (_, i) => `<svg class="progress-diya" viewBox="0 0 36 32" aria-hidden="true" style="--delay:${-i * .17}s">
-    <g class="diya-fire">
-      <ellipse class="diya-halo" cx="18" cy="12" rx="8" ry="10" fill="#ffb428" opacity=".4"/>
-      <g class="diya-flame"><path d="M18 2c-1 6-7 9-5 14 2 6 11 4 10-2-1-4-5-6-5-12Z" fill="#f6a11a"/>
-      <path d="M18 10c0 3-3 5-2 7 1 3 5 2 5-1 0-2-2-3-3-6Z" fill="#fff2b1"/></g>
-    </g>
-    <path class="diya-bowl" d="M3 22q15 4 30 0c-2 7-8 9-15 9S5 29 3 22Z"/>
-    <path d="M3 22q15 4 30 0M10 27l1 1m6-1 1 1m6-1 1 1" fill="none" stroke="#c99555" stroke-width="1.2" stroke-linecap="round"/>
-  </svg>`).join('');
+  const footstepsProgress = $('footsteps-progress');
+  const FOOTPRINT = '<g fill="currentColor"><path d="M12 17c-4 2-6 8-5 13l2 12c1 5 8 6 11 2 2-3 1-6 0-9l-2-7c-1-3 2-6 0-9-1-2-4-3-6-2Z"/><ellipse cx="20" cy="9" rx="3.7" ry="4.5"/><ellipse cx="12.5" cy="6.5" rx="2.7" ry="3.4"/><ellipse cx="7" cy="8" rx="2.3" ry="2.8"/><ellipse cx="3.5" cy="12" rx="1.9" ry="2.4"/><ellipse cx="2.8" cy="17" rx="1.5" ry="2"/></g>';
+  footstepsProgress.innerHTML = Array.from({ length: n * n }, (_, i) => {
+    const bride = i % 2 === 0, step = Math.floor(i / 2);
+    const x = bride ? 4 + step * 6 : 96 - step * 6;
+    return `<svg class="footstep ${bride ? 'bride' : 'groom'}" viewBox="0 0 50 32" aria-hidden="true" style="left:${x}%;top:${step % 2 ? 27 : 8}px">
+      <g transform="${step % 2 ? 'translate(0 32) scale(1 -1)' : ''}"><g transform="${bride ? 'translate(50 0) rotate(90)' : 'translate(0 32) rotate(-90)'}">${FOOTPRINT}</g></g>
+    </svg>`;
+  }).join('');
   let pieces = [], geo, drag = null, zTop = 10, cover;
   const puzzleImagePaths = window.PUZZLE_IMAGES?.length ? window.PUZZLE_IMAGES : ['assets/puzzle-image.png'];
   const selectedPuzzleImage = puzzleImagePaths[Math.floor(Math.random() * puzzleImagePaths.length)];
@@ -502,13 +498,15 @@
     pieces.filter(p => !p.placed).forEach(p => {
       bg.save(); bg.translate(p.c * cell - t, p.r * cell - t); bg.stroke(p.path); bg.restore();
     });
+    bg.strokeRect(.6, .6, S - 1.2, S - 1.2);
   }
 
   function update(animate) {
     if (!stage.classList.contains('done')) drawBoard();
     const done = pieces.filter(p => p.placed).length, total = n * n;
-    diyaProgress.querySelectorAll('.progress-diya').forEach((diya, i) => diya.classList.toggle('is-lit', i < done));
-    diyaProgress.setAttribute('aria-valuenow', String(done));
+    footstepsProgress.querySelectorAll('.footstep').forEach((step, i) => step.classList.toggle('is-visible', i < done));
+    footstepsProgress.setAttribute('aria-valuenow', String(done));
+    footstepsProgress.setAttribute('aria-valuetext', `${done} of ${total} pieces placed. ${done === total ? 'The bride and groom have met.' : 'The bride and groom are walking towards each other.'}`);
     if (done === total) complete(animate);
   }
 
