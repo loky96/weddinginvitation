@@ -5,6 +5,21 @@ const html = require('node:fs').readFileSync(require('node:path').join(__dirname
 const geometry = html.slice(html.indexOf('    const mobile = innerWidth'), html.indexOf('    stage.style.width'));
 const scatter = html.slice(html.indexOf('  function scatter('), html.indexOf('  function build('));
 
+test('the empty puzzle board leaves the page background visible', () => {
+  let cleared = false;
+  const canvas = {
+    setTransform() {}, clearRect() { cleared = true; }, setLineDash() {},
+    fillRect() { throw Error('Board must not paint a separate background'); },
+    createLinearGradient() { throw Error('Board must not use a gradient'); },
+  };
+  const context = { geo: { S: 300, t: 16, cell: 75 }, dpr: 1, pieces: [], board: { getContext: () => canvas } };
+  vm.runInNewContext(html.slice(html.indexOf('  function drawBoard('), html.indexOf('  function update(')), context);
+  context.drawBoard();
+  assert.ok(cleared);
+  assert.ok(!html.includes('board-frame'));
+  assert.ok(!html.includes('temple-interior'));
+});
+
 for (const width of [319, 320, 375, 495, 600, 900]) {
   test(`all 16 scattered pieces remain outside the board and within the page at ${width}px`, () => {
     const geo = vm.runInNewContext(geometry + '\ngeo;', { n: 4, innerWidth: width, stage: { parentElement: { clientWidth: Math.min(width, 600) } } });

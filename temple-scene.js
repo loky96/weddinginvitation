@@ -5,12 +5,11 @@
   const art = scene.querySelector('.temple-art');
   const left = scene.querySelector('.temple-leaf.left');
   const right = scene.querySelector('.temple-leaf.right');
-  const interior = scene.querySelector('.temple-interior');
   const cue = scene.querySelector('.scroll-cue');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = v => Math.max(0, Math.min(1, v));
   const ease = v => { const t = clamp(v); return t * t * (3 - 2 * t); };
-  let entered = false, pending = false, shownProgress = 0, lastFrame = 0, doorsHeard = false;
+  let entered = false, pending = false, shownProgress = 0, lastFrame = 0;
 
   function finish() {
     if (entered) return;
@@ -22,11 +21,16 @@
     document.querySelectorAll('.game, .scroll-wrap').forEach(section => section.inert = false);
     window.scrollTo({ top: 0, behavior: 'instant' });
     dispatchEvent(new Event('temple-entered'));
-    requestAnimationFrame(() => requestAnimationFrame(() => scene.classList.add('faded')));
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      left.style.transform = 'rotateY(-105deg)';
+      right.style.transform = 'rotateY(105deg)';
+      scene.classList.add('faded');
+    }));
+    window.InvitationSound?.play('doors');
     setTimeout(() => {
       scene.remove();
       document.getElementById('g-title').focus({ preventScroll: true });
-    }, reduced ? 0 : 950);
+    }, reduced ? 0 : 1150);
   }
 
   function draw(timestamp = performance.now()) {
@@ -57,14 +61,11 @@
     const cy = (initialY + (lowY - initialY) * pan) * (1 - zoom) + doorY * zoom;
     const cx = imageW / 2 + (doorX - imageW / 2) * zoom;
     art.style.transform = `translate(${w / 2 - cx * s}px, ${h / 2 - cy * s}px) scale(${s})`;
-    const angle = 105 * ease((p - .76) / .21);
-    left.style.transform = `rotateY(${-angle}deg)`;
-    right.style.transform = `rotateY(${angle}deg)`;
-    interior.style.opacity = String(ease((p - .76) / .08));
-    if (angle > 0 && !doorsHeard) { window.InvitationSound?.play('doors'); doorsHeard = true; }
-    if (p < .74) doorsHeard = false;
+    left.style.transform = 'rotateY(0deg)';
+    right.style.transform = 'rotateY(0deg)';
     cue.style.opacity = String(1 - ease(p / .15));
-    if (p >= .995 || (reduced && p > .06)) finish();
+    // The opening doors and entrance crossfade together, with no intermediate reveal card.
+    if (p >= .76 || (reduced && p > .06)) finish();
     else if (Math.abs(requested - shownProgress) >= .0001) schedule();
   }
   function schedule() {

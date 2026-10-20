@@ -16,10 +16,10 @@
 <link rel="stylesheet" href="tied-scroll.css">
 <style>
   body.theme-puzzle { background-color: #faf0dc;
-    background-image: url('assets/kolam-pattern.svg'), url('assets/paper-texture.svg'); background-size: 480px 480px, 192px 192px; }
+    background-image: url('assets/paper-texture.svg'); background-size: 192px 192px; }
   .kolam-background { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity .8s; }
   body.entered .kolam-background { opacity: 1; }
-  .kolam-background .kolam { position: absolute; width: clamp(230px, 38vw, 460px); height: auto; opacity: .07; }
+  .kolam-background .kolam { position: absolute; width: clamp(230px, 38vw, 460px); height: auto; opacity: .04; }
   .kolam-background .k-lines * { stroke: var(--maroon); stroke-width: 1.1; }
   .kolam-background .k-dots { fill: var(--gold); }
   .kolam-background .kolam:nth-child(1) { top: -65px; left: -90px; transform: rotate(12deg); }
@@ -34,21 +34,6 @@
   .temple-art { position: absolute; top: 0; left: 0; width: 1086px; height: 1448px; transform-origin: 0 0; will-change: transform; }
   .temple-art img { display: block; width: 100%; height: 100%; }
   .temple-doors { position: absolute; left: 35%; top: 47.5%; width: 33%; height: 37.7%; display: flex; perspective: 900px; background: #432010; }
-  .temple-interior { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
-    padding: 32px 26px; color: var(--maroon); text-align: center; opacity: 0; background-color: #ecddbf;
-    background-image: url('assets/paper-texture.svg'), radial-gradient(ellipse at 50% 40%, #fbf1dc, #e4cea4);
-    background-size: 160px 160px, 100% 100%; }
-  .temple-interior::before { content: ''; position: absolute; inset: 12px; border-block: 2px double #ad824f80;
-    background: url('assets/kolam-border.svg') left top / 8px 32px repeat-y, url('assets/kolam-border.svg') right top / 8px 32px repeat-y; }
-  .temple-interior p { position: relative; margin: 0; }
-  .temple-interior .interior-invocation { font: 600 22px/1 'Noto Serif Tamil', serif; }
-  .temple-interior .interior-crest { width: 70px; height: 70px; opacity: .8; }
-  .temple-interior .interior-eyebrow { font: 600 10px/1.5 var(--body); letter-spacing: .22em; text-transform: uppercase; }
-  .temple-interior .interior-names { font: italic 600 38px/1.12 var(--serif); }
-  .temple-interior .interior-names em { display: block; font-size: 23px; color: #a4773b; padding: 4px 0; }
-  .interior-rule { width: 62px; height: 1px; background: #a4773b80; margin: 4px 0; }
-  .temple-interior .interior-date { font: 600 15px/1.7 var(--serif); }
-  .interior-date span { font: 500 10px/1.5 var(--body); letter-spacing: .22em; text-transform: uppercase; }
   /* Crop the transparent gutters from the door artwork so the closed edges meet the stone frame. */
   .temple-leaf { width: 50%; height: 100%; background-image: url('assets/temple-doors.png'); background-size: 213.3333% 106.815%;
     background-color: #432010; background-repeat: no-repeat; position: relative; z-index: 1; backface-visibility: hidden; will-change: transform; }
@@ -58,7 +43,8 @@
     .temple-art { width: 841px; height: 1870px; }
     .temple-doors { left: 31.4%; top: 59.7%; width: 37.3%; height: 32.6%; }
   }
-  .temple-approach.departing { position: fixed; inset: 0; height: 100svh; pointer-events: none; transition: opacity .9s ease; }
+  .temple-approach.departing { position: fixed; inset: 0; height: 100svh; pointer-events: none; transition: opacity 1.1s ease; }
+  .temple-approach.departing .temple-leaf { transition: transform 1.1s cubic-bezier(.4, 0, .2, 1); }
   .temple-approach.departing .temple-sticky { position: absolute; inset: 0; }
   .temple-approach.departing.faded { opacity: 0; }
   .skip-entrance { position: absolute; top: max(16px, env(safe-area-inset-top)); right: 18px; padding: 10px 14px; border: 1px solid #fff7e750;
@@ -68,7 +54,7 @@
     font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; white-space: nowrap; pointer-events: none; }
   .scroll-cue { transition: opacity .3s; }
   body:not(.entered) .game, body:not(.entered) .scroll-wrap { visibility: hidden; }
-  @media (prefers-reduced-motion: reduce) { .temple-approach.departing { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .temple-approach.departing, .temple-approach.departing .temple-leaf { transition: none; } }
 
   .game { max-width: 600px; margin: 0 auto; padding: clamp(20px, 4vh, 40px) 20px 12px; text-align: center; }
   @media (max-width: 600px) { .game { padding-left: 10px; padding-right: 10px; } }
@@ -90,9 +76,7 @@
   .skip-entrance:focus-visible { outline: 3px solid var(--marigold); outline-offset: 3px; }
 
   .stage { position: relative; margin: 0 auto; touch-action: manipulation; }
-  #board { position: absolute; background: url('assets/paper-texture.svg') 0 0 / 160px 160px, #e9ddc4; }
-  .board-frame { position: absolute; box-sizing: content-box; border: 6px solid transparent; border-image: url('assets/puzzle-border.svg') 24 round;
-    pointer-events: none; filter: drop-shadow(0 2px 3px #b77f2520); }
+  #board { position: absolute; background: transparent; }
   .shine { position: absolute; pointer-events: none; overflow: hidden; border-radius: 2px; z-index: 5; }
   .shine::after { content: ''; position: absolute; inset: -20% auto -20% -60%; width: 45%; transform: skewX(-20deg);
     background: linear-gradient(90deg, transparent, rgba(255,236,180,.75), transparent); opacity: 0; }
@@ -111,9 +95,7 @@
   .piece.glide { transition: transform .55s cubic-bezier(.3,1.3,.5,1), filter .2s; }
   .piece.placed { filter: none; z-index: 1 !important; cursor: default; pointer-events: none; }
   .piece:focus-visible { outline: none; filter: drop-shadow(0 0 4px var(--marigold)) drop-shadow(0 0 4px var(--marigold)); }
-  .done .board-frame { animation: frame-glow 1.8s ease-out; }
   .done .piece { opacity: 0; transition: opacity .6s .5s; }
-  @keyframes frame-glow { 40% { filter: drop-shadow(0 0 10px #f2b54490); } }
 
   .solved { margin: 14px auto 0; max-width: 420px; animation: rise .6s ease-out both; }
   .solved[hidden] { display: none; }
@@ -135,34 +117,22 @@
   .scroll-wrap .knot .label { border: 0; border-radius: 0; background: transparent; box-shadow: none;
     padding: 6px 4px; font: italic 600 1.15rem/1.35 var(--serif); color: var(--maroon); animation: none; }
   .paper { padding-inline: 10px; background-color: #f9efdc;
-    background-image: url('assets/paper-texture.svg'), linear-gradient(90deg, #b7812e12, transparent 12% 88%, #b7812e12);
-    background-size: 192px 192px, 100% 100%; }
+    background-image: url('assets/paper-texture.svg'); background-size: 192px 192px; }
   /* Sleek typesetting inside the scroll: smaller, airier type, quiet dividers, no boxes. */
-  .paper { --paisley: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 3c9 0 15 7 15 15 0 10-9 17-17 19C9 34 4 26 6 17 8 9 13 3 20 3z' fill='none' stroke='%23C58B30' stroke-width='1.4'/%3E%3Cpath d='M20 9c5 0 9 4 9 9 0 6-5 10-10 11-5-2-8-7-7-12 1-4 4-8 8-8z' fill='none' stroke='%23B32A1C' stroke-width='1'/%3E%3Ccircle cx='19' cy='19' r='2.2' fill='%23C58B30'/%3E%3Cpath d='M18 33l-4 4M22 33l4 4' stroke='%23587A37' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); }
   .paper .festoon { height: 40px; margin: 0; }
   .paper .suzhi { font: 600 1.4rem/1 'Noto Serif Tamil', serif; color: var(--maroon); text-align: center; margin: 6px 0 0; }
   .paper main { position: relative; min-width: 0; margin: 10px clamp(4px, 1.4vw, 10px) 0; padding: 18px clamp(6px, 1.6vw, 12px) 10px; font-size: clamp(13px, 2.7vw, 14.5px); line-height: 1.65;
-    border: 1px solid rgba(197,139,48,.6); outline: 1px solid rgba(197,139,48,.3); outline-offset: 3px;
+    border: 0; outline: 0;
     background: transparent; }
   .paper .sec { padding: 22px 0 26px; }
-  .paper .divider { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--gold); margin: -6px 0; }
-  .paper .divider::before, .paper .divider::after { content: ''; flex: 1; max-width: 70px; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold)); }
-  .paper .divider::after { transform: scaleX(-1); }
-  .paper .divider svg { width: 46px; height: 24px; }
   .paper .qual { color: var(--verm); }
   .paper .person { position: relative; padding: 0 6px; }
   .paper .cal-month { position: relative; display: inline-block; padding: 0 22px; }
-  .paper .cal-month::before, .paper .cal-month::after { content: ''; position: absolute; top: -2px; width: 16px; height: 16px; background: var(--paisley) center / contain no-repeat; }
-  .paper .cal-month::before { left: 0; } .paper .cal-month::after { right: 0; transform: scaleX(-1); }
   .paper button.day { box-shadow: 0 0 0 2px #fffaf0, 0 0 0 4px var(--marigold); animation: none; }
   .paper button.day.hl-wedding { box-shadow: 0 0 0 2px #fffaf0, 0 0 0 4px var(--verm); }
   .paper .ev-title { display: inline-flex; align-items: center; gap: 10px; }
-  .paper .ev-title::before, .paper .ev-title::after { content: ''; width: 18px; height: 18px; background: var(--paisley) center / contain no-repeat; display: inline-block; }
-  .paper .ev-title::after { transform: scaleX(-1); margin: 0; width: 18px; height: 18px; background: var(--paisley) center / contain no-repeat; }
+  .paper .ev-title::after { content: none; }
   .paper .ev-title + .ev-hint { display: none; }
-  .paper .ev-row { display: block; width: 72px; height: 6px; margin: 4px auto 10px;
-    background: conic-gradient(from 135deg at 50% 0, var(--gold) 90deg, transparent 0) 0 0 / 8px 6px; opacity: .7; }
   .paper .event-illustration { display: block; width: clamp(120px, 38vw, 180px); max-width: 100%; height: auto;
     aspect-ratio: 1; object-fit: contain; margin: 8px auto 14px; }
   .paper .qr { padding: 10px; background: transparent; border: 0; border-radius: 0; }
@@ -227,7 +197,6 @@
     .scroll-wrap { padding-inline: 12px; }
     .paper h2 { font-size: .68rem; letter-spacing: .18em; }
     .paper .ev-title { font-size: 1.3rem; gap: 6px; }
-    .paper .ev-title::before, .paper .ev-title::after { width: 14px; height: 14px; }
     .paper .parents, .paper .inst { font-size: .76rem; }
     .paper .chip { gap: 5px; padding: 7px 9px; }
   }
@@ -245,14 +214,6 @@
         <img src="assets/temple-entrance.png" width="1086" height="1448" fetchpriority="high" alt="A South Indian temple entrance at sunset, decorated with wedding garlands and glowing lamps">
       </picture>
       <div class="temple-doors" aria-hidden="true">
-        <div class="temple-interior">
-          <p class="interior-invocation" lang="ta">உ</p>
-          <img class="interior-crest" src="assets/kolam-cross.svg" width="70" height="70" alt="">
-          <p class="interior-eyebrow">The wedding of</p>
-          <p class="interior-names">Lokesh<em>&amp;</em>Haripriya</p>
-          <span class="interior-rule"></span>
-          <p class="interior-date">21 &amp; 22 November 2026<br><span>Chennai</span></p>
-        </div>
         <div class="temple-leaf left"></div><div class="temple-leaf right"></div>
       </div>
     </div>
@@ -269,7 +230,6 @@
   <div class="diya-progress" id="diya-progress" role="progressbar" aria-label="Puzzle pieces placed" aria-valuemin="0" aria-valuemax="16" aria-valuenow="0"></div>
   <div class="stage" id="stage">
     <canvas id="board" aria-hidden="true"></canvas>
-    <div class="board-frame" id="board-frame" aria-hidden="true"></div>
     <div class="shine" id="shine" aria-hidden="true"></div>
   </div>
   <div class="solved" id="solved" hidden>
@@ -330,13 +290,11 @@
     card.querySelectorAll('a[download], .note').forEach(el => el.remove());
     card.querySelector('.btn').textContent = 'Add to Calendar';
   });
-  // Traditional ornaments: thoranam, Pillaiyar suzhi, lotus dividers, and a closing lotus.
+  // Traditional ornaments: thoranam, Pillaiyar suzhi, section kolam, and a closing lotus.
   const LOTUS = '<svg viewBox="0 0 92 48" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M46 44c-10-6-14-16-12-30 6 8 10 18 12 30zM46 44c10-6 14-16 12-30-6 8-10 18-12 30zM46 44c-4-12-2-24 0-34 2 10 4 22 0 34z"/><path d="M46 44c-14 0-24-6-30-16 10 2 20 8 30 16zM46 44c14 0 24-6 30-16-10 2-20 8-30 16z"/><path d="M14 44h64" stroke-width="1.2"/></g><circle cx="46" cy="44" r="2.4" fill="#B32A1C"/></svg>';
   const paper = document.querySelector('.paper');
   document.querySelector('.heading-ornament').innerHTML = LOTUS;
   paper.insertAdjacentHTML('afterbegin', '<div class="festoon" aria-hidden="true"></div><p class="suzhi" lang="ta" aria-hidden="true">உ</p>');
-  $main.querySelectorAll('.sec + .sec').forEach(sec => sec.insertAdjacentHTML('beforebegin', `<div class="divider" aria-hidden="true">${LOTUS}</div>`));
-  $main.querySelectorAll('.ev-title').forEach(t => t.insertAdjacentHTML('afterend', '<span class="ev-row" aria-hidden="true"></span>'));
   $main.querySelector('.blessing').insertAdjacentHTML('afterend', LOTUS.replace('class="', 'class="lotus-end ').replace('<svg ', '<svg class="lotus-end" style="color:var(--gold)" '));
 
   const hang = document.getElementById('hang'), knot = document.getElementById('knot');
@@ -445,7 +403,6 @@
     cg.scale(dpr, dpr);
     drawCover(cg, S);
     for (const el of [board, $('shine')]) Object.assign(el.style, { left: boardX + 'px', top: boardY + 'px', width: S + 'px', height: S + 'px' });
-    Object.assign($('board-frame').style, { left: boardX - 6 + 'px', top: boardY - 6 + 'px', width: S + 'px', height: S + 'px' });
     board.width = board.height = S * dpr;
 
     const H = Array.from({ length: n - 1 }, () => Array.from({ length: n }, rnd));
@@ -512,11 +469,6 @@
     const { S, t, cell } = geo, bg = board.getContext('2d');
     bg.setTransform(dpr, 0, 0, dpr, 0, 0);
     bg.clearRect(0, 0, S, S);
-    const parchment = bg.createLinearGradient(0, 0, 0, S);
-    parchment.addColorStop(0, 'rgba(228,213,182,.86)');
-    parchment.addColorStop(1, 'rgba(240,229,206,.88)');
-    bg.fillStyle = parchment;
-    bg.fillRect(0, 0, S, S);
     bg.setLineDash([2, 5]);
     bg.lineCap = 'round';
     bg.lineWidth = 1.2;
