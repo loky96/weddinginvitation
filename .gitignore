@@ -1,0 +1,9 @@
+.DS_Store
+Thumbs.db
+__MACOSX/
+.claude/
+.impeccable/
+.taste-skill/
+node_modules/
+.env
+.env.*

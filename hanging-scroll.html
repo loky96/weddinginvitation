@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lokesh &amp; Haripriya | Wedding Invitation | 21–22 November 2026</title>
+<meta name="description" content="Reception 21 Nov, Wedding 22 Nov 2026 · Banyan Palace - Mukunda Hall, Chennai. Untie the cord to unroll our invitation.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lokesh & Haripriya | Wedding Invitation">
+<meta property="og:description" content="Reception 21 Nov · Wedding 22 Nov 2026 · Banyan Palace, Chennai">
+<meta name="theme-color" content="#2b1a14">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Noto+Serif:wght@400;600&family=Shippori+Mincho:wght@500;700&family=Noto+Serif+Tamil:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="tied-scroll.css">
+<style>
+  /* Japanese kakejiku (hanging scroll) mounted in Kanjivaram silk, tied with a mizuhiki cord. */
+  :root { --sumi: #2a201c; --sakura: #f4bfcd; --washi: #fbf6ea; --mincho: 'Shippori Mincho', 'Cormorant Garamond', serif; }
+  body { background: #efe3cc; background-image: linear-gradient(90deg, rgba(120,90,50,.06) 1px, transparent 1px); background-size: 46px 100%; }
+  h1, h2, h3, .venue-name, .ev-title, .blessing { font-family: var(--mincho); }
+
+  .stage { min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 8px 48px; }
+  .wall { text-align: center; margin-bottom: 10px; }
+  .wall h1 { font-size: clamp(2rem, 9vw, 2.8rem); margin: 0; color: var(--sumi); }
+  .wall h1 span { color: var(--verm); }
+  .wall p { margin: 0; font-size: .95rem; }
+
+  .seigaiha { height: 34px; background-color: var(--washi);
+    background-image:
+      radial-gradient(circle at 50% 100%, var(--washi) 0 3px, var(--sakura) 3px 5px, var(--washi) 5px 8px, #e7a3b6 8px 10px, var(--washi) 10px 13px, var(--gold) 13px 14.5px, transparent 14.5px),
+      radial-gradient(circle at 50% 100%, var(--washi) 0 3px, var(--sakura) 3px 5px, var(--washi) 5px 8px, #e7a3b6 8px 10px, var(--washi) 10px 13px, var(--gold) 13px 14.5px, transparent 14.5px);
+    background-size: 30px 15px; background-position: 0 0, 15px 7.5px; border-bottom: 1px solid var(--gold); }
+  .paper-head { text-align: center; padding: 22px 16px 0; }
+  .hanko { display: inline-grid; place-items: center; width: 54px; height: 54px; border-radius: 6px; background: #c0281c; color: #fff4ea;
+    font: 700 1.9rem/1 var(--mincho); box-shadow: inset 0 0 0 3px #c0281c, inset 0 0 0 4.5px #fff4ea; transform: rotate(-4deg); }
+  .open .hanko { animation: stamp .45s cubic-bezier(.3,1.6,.5,1) .5s both; }
+  @keyframes stamp { from { transform: rotate(-4deg) scale(2.2); opacity: 0; } }
+  .tamil { font: 600 1.05rem 'Noto Serif Tamil', serif; color: var(--maroon); margin: 10px 0 0; }
+
+  /* Sections become passages on the scroll, divided by an ink brush stroke. */
+  .theme-maki .sec::after { content: ''; position: absolute; left: 15%; right: 15%; bottom: 0; height: 10px; opacity: .75;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6C60 2 140 3 200 4s80 1 96 3c-40 2-120 1-190 1S20 9 2 6z' fill='%232a201c'/%3E%3C/svg%3E") center / 100% 100% no-repeat; }
+  .theme-maki .sec:last-of-type::after { display: none; }
+  .theme-maki h2 { color: var(--sumi); }
+  .theme-maki h2::after { background: radial-gradient(circle, var(--verm) 0 3px, transparent 4px) center/10px 10px no-repeat; }
+  .theme-maki .ev { background: #fff9ef; border-color: #e3cfa6; }
+  .theme-maki .ev-reception { border-top-color: var(--maroon); }
+  .theme-maki .btn { border-radius: 4px; }
+  .ink-kolam { width: 50px; display: block; margin: 0 auto 4px; }
+  .ink-kolam .k-lines * { stroke: var(--sumi); stroke-width: 3.2; stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .ink-kolam .k-dots { fill: #e7a3b6; }
+  .in .ink-kolam .k-lines * { animation: draw 1.6s ease-in-out forwards .2s; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .petal.p0 { background: var(--sakura); border-radius: 50% 0 50% 50%; }
+  .petal.p2 { background: var(--marigold); }
+
+</style>
+</head>
+<body class="theme-maki">
+
+<div class="stage">
+  <header class="wall">
+    <h1>Lokesh <span>&amp;</span> Haripriya</h1>
+    <p>21 – 22 November 2026 · Chennai</p>
+  </header>
+
+  <div class="hang" id="hang">
+    <svg class="hanger" viewBox="0 0 120 46" aria-hidden="true"><circle cx="60" cy="5" r="4" fill="#8a5a14"/><path d="M60 6L8 44M60 6l52 38" stroke="#c0281c" stroke-width="2" fill="none"/></svg>
+    <div class="rod" aria-hidden="true"></div>
+    <div class="mount">
+      <div class="sheet" id="sheet">
+        <div class="paper">
+          <div class="seigaiha" aria-hidden="true"></div>
+          <div class="paper-head">
+            <span class="hanko" aria-hidden="true">寿</span>
+            <p class="tamil" lang="ta">திருமண அழைப்பிதழ்</p>
+          </div>
+          <main id="main"></main>
+        </div>
+      </div>
+    </div>
+    <div class="roll" id="roll">
+      <span class="band" aria-hidden="true"></span>
+      <button class="knot" id="knot" type="button" aria-label="Untie the cord to unroll the invitation">
+        <span class="label">Untie the cord</span>
+      </button>
+    </div>
+    <p class="hint-after">Keep scrolling to read ↓</p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="invite.js"></script>
+<script>
+  INVITE.render(document.getElementById('main'), {
+    ornament: INVITE.art.kolam.replace('class="kolam"', 'class="kolam ink-kolam"'),
+  });
+
+  const hang = document.getElementById('hang');
+  const knot = document.getElementById('knot');
+  knot.insertAdjacentHTML('afterbegin', INVITE.art.knot);
+  hang.querySelector('.sheet').inert = true;
+  knot.addEventListener('click', () => INVITE.unroll(hang));
+</script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lokesh &amp; Haripriya | Wedding Invitation | 21–22 November 2026</title>
+<meta name="description" content="Reception 21 Nov, Wedding 22 Nov 2026 · Banyan Palace - Mukunda Hall, Chennai. Pull the garland to reveal our invitation.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lokesh & Haripriya | Wedding Invitation">
+<meta property="og:description" content="Reception 21 Nov · Wedding 22 Nov 2026 · Banyan Palace, Chennai">
+<meta name="theme-color" content="#7B0712">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Noto+Serif:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  body { background-color: #fbf1df; }
+  .hero { min-height: 100svh; display: flex; flex-direction: column; align-items: center; padding: 0 16px 24px; }
+  .canopy {
+    width: calc(100% + 32px); height: 70px; flex: none;
+    background:
+      radial-gradient(circle at 50% 0, var(--maroon) 0 29px, transparent 30px) 0 34px / 60px 30px repeat-x,
+      linear-gradient(var(--maroon) 30px, var(--gold) 30px 35px, transparent 35px);
+    filter: drop-shadow(0 6px 4px rgba(75,40,28,.35));
+  }
+  .hero .festoon { width: calc(100% + 32px); margin-top: -24px; }
+  .card {
+    position: relative; overflow: hidden; width: min(100%, 420px); margin-top: 18px; flex: 1; max-height: 560px; min-height: 420px;
+    background: var(--cream); border-radius: 10px; text-align: center;
+    box-shadow: inset 0 0 0 6px var(--cream), inset 0 0 0 7px var(--gold), 0 18px 40px -22px rgba(75,40,28,.7);
+    display: flex; flex-direction: column; justify-content: center; padding: 30px 20px;
+  }
+  .card h1 { font-size: clamp(2.4rem, 11vw, 3.2rem); margin: .1em 0; }
+  .card h1 span { display: block; font-size: .5em; color: var(--verm); font-style: italic; }
+  .card .eyebrow { letter-spacing: .3em; font-size: .75rem; color: var(--verm); font-weight: 600; margin: 0; }
+  .card .date { font: 600 1.15rem var(--serif); }
+  .scroll-cue { display: inline-flex; min-height: 44px; align-items: center; text-decoration: none; font-weight: 600; }
+
+  /* The garland curtain: strands of marigold + jasmine that slide apart. */
+  .curtain { position: absolute; inset: 0; display: flex; touch-action: none; cursor: grab; z-index: 2; transition: transform .25s; }
+  .curtain .side { flex: 1; display: flex; justify-content: space-evenly; transition: transform 1s cubic-bezier(.5,0,.2,1); }
+  .curtain i {
+    display: block; width: 34px; height: calc(100% + 30px); margin-top: -10px;
+    background:
+      radial-gradient(circle, var(--jasmine) 0 5px, #e3d3b0 5.5px, transparent 6.5px) 0 12px / 34px 24px repeat-y,
+      radial-gradient(circle, var(--marigold) 0 10px, #d97f00 11px, transparent 12px) 0 0 / 34px 24px repeat-y;
+    transition: transform 1s cubic-bezier(.5,0,.2,1);
+  }
+  .curtain i:nth-child(even) { background-position: 0 0, 0 12px; filter: hue-rotate(-18deg) saturate(1.2); margin-top: -2px; }
+  .tassel { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 3; white-space: nowrap; }
+  .pull-hint { position: absolute; left: 0; right: 0; bottom: 70px; z-index: 3; font-size: .8rem; font-weight: 600; color: var(--maroon); text-shadow: 0 0 6px #fff, 0 0 6px #fff; pointer-events: none; }
+  .revealed .pull-hint { display: none; }
+  .revealed .curtain { pointer-events: none; }
+  .revealed .side.l { transform: translateX(-108%); }
+  .revealed .side.r { transform: translateX(108%); }
+  .revealed .side.l i:nth-child(odd), .revealed .side.r i:nth-child(even) { transform: rotate(4deg); }
+  .revealed .tassel { display: none; }
+  .names { opacity: .15; transition: opacity 1s .3s; }
+  .revealed .names { opacity: 1; }
+
+  .bloom { display: inline-block; width: 40px; height: 40px; position: absolute; top: -20px; left: 50%; transform: translateX(-50%) scale(.4); transition: transform .6s cubic-bezier(.3,1.6,.5,1) .15s;
+    background: radial-gradient(circle, var(--verm) 0 6px, var(--marigold) 7px 13px, #d97f00 14px 15px, transparent 16px); border-radius: 50%; }
+  .in .bloom { transform: translateX(-50%) scale(1); }
+  .theme-garland .sec { margin-top: 40px; }
+  .theme-garland .ev { background: linear-gradient(#fff8ea, #fbe4c4); box-shadow: inset 0 0 0 4px #fff8ea, inset 0 0 0 5px rgba(179,42,28,.35); }
+  .theme-garland .ev:not([open]) summary { padding: 20px 0; }
+  .theme-garland .ev:not([open]) { animation: nudge 3s ease-in-out infinite; }
+  @keyframes nudge { 50% { transform: translateY(-3px); } }
+</style>
+</head>
+<body class="theme-garland">
+
+<header class="hero" id="hero">
+  <div class="canopy" aria-hidden="true"></div>
+  <div class="festoon" aria-hidden="true"></div>
+  <div class="card" id="card">
+    <div class="names">
+      <p class="eyebrow">WEDDING INVITATION</p>
+      <h1>Lokesh <span>&amp;</span> Haripriya</h1>
+      <p class="date">21 – 22 November 2026</p>
+      <p>Banyan Palace, Chennai</p>
+      <a class="scroll-cue" href="#invitation">Scroll for our invitation ↓</a>
+    </div>
+    <div class="curtain" id="curtain" aria-hidden="true">
+      <div class="side l"><i></i><i></i><i></i><i></i></div>
+      <div class="side r"><i></i><i></i><i></i><i></i></div>
+    </div>
+    <p class="pull-hint" aria-hidden="true">↓ Pull the garland down ↓</p>
+    <button class="btn tassel" id="reveal" type="button">🌼 Reveal invitation</button>
+  </div>
+</header>
+<main id="main"></main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="invite.js"></script>
+<script>
+  INVITE.render(document.getElementById('main'), {
+    ornament: '<span class="bloom" aria-hidden="true"></span>',
+    collapseEvents: true,
+    collapseVenue: true,
+    venueArt: INVITE.art.gopuram,
+  });
+  INVITE.observe(sec => {
+    const r = sec.getBoundingClientRect();
+    INVITE.petals(r.left + r.width / 2, Math.max(r.top, 40), 6);
+  });
+
+  const card = document.getElementById('card');
+  const curtain = document.getElementById('curtain');
+  function reveal() {
+    if (card.classList.contains('revealed')) return;
+    curtain.style.transform = '';
+    card.classList.add('revealed');
+    const r = card.getBoundingClientRect();
+    INVITE.petals(r.left + r.width / 2, r.top + r.height / 2, 26);
+    card.querySelector('.scroll-cue').focus({ preventScroll: true });
+  }
+  document.getElementById('reveal').addEventListener('click', reveal);
+
+  // Drag the garland down to pull it open; a short tap also works.
+  let startY = null;
+  curtain.addEventListener('pointerdown', e => { startY = e.clientY; curtain.setPointerCapture(e.pointerId); });
+  curtain.addEventListener('pointermove', e => {
+    if (startY === null) return;
+    curtain.style.transform = `translateY(${Math.max(0, Math.min(60, e.clientY - startY))}px)`;
+  });
+  curtain.addEventListener('pointerup', e => {
+    const dy = e.clientY - startY;
+    startY = null;
+    if (dy > 40 || Math.abs(dy) < 6) reveal();
+    else curtain.style.transform = '';
+  });
+
+  // Tiny flower pop on any tap that isn't a control.
+  document.addEventListener('click', e => {
+    if (e.target.closest('a, button, summary, .curtain')) return;
+    INVITE.petals(e.clientX, e.clientY, 5);
+  });
+  // Opening a hidden card gets a little celebration too.
+  document.addEventListener('toggle', e => {
+    if (!e.target.open) return;
+    const r = e.target.getBoundingClientRect();
+    INVITE.petals(r.left + r.width / 2, r.top + 20, 8);
+  }, true);
+</script>
+</body>
+</html>

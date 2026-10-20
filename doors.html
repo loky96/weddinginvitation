@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lokesh &amp; Haripriya | Wedding Invitation | 21–22 November 2026</title>
+<meta name="description" content="Reception 21 Nov, Wedding 22 Nov 2026 · Banyan Palace - Mukunda Hall, Chennai. Tap to open our invitation.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lokesh & Haripriya | Wedding Invitation">
+<meta property="og:description" content="Reception 21 Nov · Wedding 22 Nov 2026 · Banyan Palace, Chennai">
+<meta name="theme-color" content="#4a1206">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Noto+Serif:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  .locked { overflow: hidden; }
+  .cover { position: fixed; inset: 0; z-index: 40; display: flex; perspective: 1600px; cursor: pointer; }
+  .cover .festoon { position: absolute; inset: 0 0 auto; z-index: 3; }
+  .door {
+    flex: 1; position: relative; transition: transform 1.3s cubic-bezier(.6,.05,.3,1), opacity .4s 1s;
+    background:
+      radial-gradient(circle, #e2b25a 0 2.5px, transparent 3.5px) 0 0 / 30px 30px,
+      linear-gradient(90deg, #3f0f05, #7b2a10 50%, #4f1407);
+    border: 7px solid #a8742a; box-shadow: inset 0 0 50px rgba(0,0,0,.6);
+  }
+  .door.l { transform-origin: left center; border-right-width: 3px; }
+  .door.r { transform-origin: right center; border-left-width: 3px; }
+  .panels { position: absolute; inset: 9% 14%; display: grid; grid-template-rows: repeat(3, 1fr); gap: 5%; }
+  .panels i {
+    border: 3px double var(--gold); border-radius: 50% 50% 4px 4px / 22% 22% 4px 4px;
+    background: radial-gradient(circle at 50% 55%, #d9a144 0 5px, #6b200c 6px 9px, transparent 10px), linear-gradient(#6b200c, #3f0f05);
+    box-shadow: inset 0 0 20px rgba(0,0,0,.7);
+  }
+  .door.l::after, .door.r::after { /* brass door ring */
+    content: ''; position: absolute; top: 50%; width: 26px; height: 26px; border: 4px solid #e2b25a; border-radius: 50%;
+  }
+  .door.l::after { right: 10px; } .door.r::after { left: 10px; }
+  .arch {
+    position: absolute; z-index: 2; left: 50%; top: 52%; transform: translate(-50%, -50%);
+    width: min(84vw, 360px); padding: 70px 22px 30px; text-align: center; color: var(--brown);
+    background: var(--cream); border-radius: 50% 50% 14px 14px / 34% 34% 14px 14px;
+    box-shadow: 0 0 0 4px var(--gold), 0 0 0 9px #5a1708, 0 0 0 11px var(--gold), 0 30px 60px rgba(0,0,0,.55);
+    transition: opacity .5s, transform .6s;
+  }
+  .arch h1 { font-size: clamp(2.3rem, 11vw, 3.1rem); margin: .1em 0; }
+  .arch h1 span { display: block; font-size: .55em; color: var(--verm); font-style: italic; }
+  .arch .eyebrow { font-size: .75rem; letter-spacing: .3em; color: var(--verm); font-weight: 600; margin: 0; }
+  .arch .hint { font-size: .85rem; font-style: italic; margin-top: 10px; animation: breathe 2s ease-in-out infinite; }
+  @keyframes breathe { 50% { opacity: .45; } }
+  .bell-btn { position: absolute; left: 50%; top: -6px; transform: translateX(-50%); background: none; border: 0; padding: 0; width: 64px; height: 76px; cursor: pointer; }
+  .bell { width: 100%; height: 100%; transform-origin: 50% 0; }
+  .bell.ring { animation: ring 1.1s ease-out; }
+  @keyframes ring { 15% { transform: rotate(16deg); } 35% { transform: rotate(-13deg); } 55% { transform: rotate(8deg); } 75% { transform: rotate(-4deg); } }
+  .opening .door.l { transform: rotateY(-102deg); }
+  .opening .door.r { transform: rotateY(102deg); }
+  .opening .door { opacity: 0; }
+  .opening .arch { opacity: 0; transform: translate(-50%, -50%) scale(.9); }
+  .opening .festoon { transition: transform .8s .3s; transform: translateY(-60px); }
+
+  .sound { position: fixed; bottom: 12px; right: 12px; box-shadow: 0 4px 12px -6px rgba(0,0,0,.4); z-index: 45; min-width: 44px; min-height: 44px; border-radius: 999px; border: 1px solid var(--gold); background: var(--cream); color: var(--maroon); font: 600 .8rem var(--body); padding: 0 12px; cursor: pointer; }
+
+  /* Temple lamps: one pair per section, lit progressively as each section arrives. */
+  .lamps { display: flex; justify-content: space-between; position: absolute; inset: -22px 14px auto; pointer-events: none; }
+  .lamps .lamp { width: 26px; }
+  .in .lamps .lamp .flame { fill: #ff9a1f; transition-delay: .2s; }
+  .in .lamps .lamp .glow { opacity: .8; transition-delay: .2s; }
+  .in .lamps .lamp:last-child * { transition-delay: .6s; }
+  .in .lamps .lamp .flame { animation: flicker 2.6s ease-in-out infinite 1s; transform-origin: 20px 15px; }
+  @keyframes flicker { 50% { transform: scale(.92, 1.06); } }
+  .theme-doors .sec { border-top: 3px solid var(--maroon); }
+  .hero-lamps { display: flex; justify-content: center; gap: 22px; padding: 26px 0 0; }
+  .hero-lamps .lamp { width: 34px; }
+  .hero-lamps .lamp .flame, .hero-lamps .lamp .glow { transition-delay: calc(var(--i) * .35s); }
+  .hero-lamps.lit .lamp .flame { fill: #ff9a1f; }
+  .hero-lamps.lit .lamp .glow { opacity: .8; }
+  .hero-title { text-align: center; padding: 10px 16px 0; }
+  .hero-title h1 { font-size: clamp(2.2rem, 10vw, 3rem); margin: 0; }
+  .hero-title p { margin: 0; letter-spacing: .2em; font-size: .8rem; color: var(--verm); font-weight: 600; }
+</style>
+</head>
+<body class="theme-doors locked">
+
+<div class="cover" id="cover">
+  <div class="festoon" aria-hidden="true"></div>
+  <div class="door l" aria-hidden="true"><div class="panels"><i></i><i></i><i></i></div></div>
+  <div class="door r" aria-hidden="true"><div class="panels"><i></i><i></i><i></i></div></div>
+  <div class="arch">
+    <button class="bell-btn" id="bell" type="button" aria-label="Ring the temple bell">
+      <svg class="bell" viewBox="0 0 64 76" aria-hidden="true"><path d="M32 0v10" stroke="#8a5a14" stroke-width="3"/><path d="M32 10c-12 0-18 10-18 24 0 12-4 18-8 22h52c-4-4-8-10-8-22 0-14-6-24-18-24z" fill="#c9972f" stroke="#8a5a14" stroke-width="1.5"/><path d="M8 56h48v5H8z" fill="#a8742a"/><circle cx="32" cy="66" r="5" fill="#8a5a14"/></svg>
+    </button>
+    <p class="eyebrow">WEDDING INVITATION</p>
+    <h1>Lokesh <span>&amp;</span> Haripriya</h1>
+    <p>21 – 22 November 2026 · Chennai</p>
+    <button class="btn" id="open" type="button">Open invitation</button>
+    <p class="hint">Tap to open our invitation</p>
+  </div>
+</div>
+
+<button class="sound" id="sound" type="button" aria-pressed="true">🔔 Sound on</button>
+
+<header class="hero-title">
+  <div class="hero-lamps" aria-hidden="true"></div>
+  <p>THE WEDDING OF</p>
+  <h1>Lokesh &amp; Haripriya</h1>
+</header>
+<main id="main"></main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="invite.js"></script>
+<script>
+  const lamp = INVITE.art.lamp;
+  INVITE.render(document.getElementById('main'), { ornament: `<div class="lamps" aria-hidden="true">${lamp}${lamp}</div>` });
+  const heroLamps = document.querySelector('.hero-lamps');
+  heroLamps.innerHTML = Array.from({ length: 5 }, (_, i) => lamp.replace('<svg', `<svg style="--i:${i}"`)).join('');
+
+  const cover = document.getElementById('cover');
+  const soundBtn = document.getElementById('sound');
+  let soundOn = true, ac;
+
+  // Synthesised temple bell (inharmonic partials); only ever triggered by a tap/click.
+  function ding() {
+    if (!soundOn) return;
+    ac ||= new (window.AudioContext || window.webkitAudioContext)();
+    const t = ac.currentTime;
+    [[660, 1], [1320, .5], [1822, .35], [3564, .2], [5874, .1]].forEach(([f, g]) => {
+      const o = ac.createOscillator(), v = ac.createGain();
+      o.frequency.value = f;
+      v.gain.setValueAtTime(g * .25, t);
+      v.gain.exponentialRampToValueAtTime(.0001, t + 2.8);
+      o.connect(v).connect(ac.destination);
+      o.start(t); o.stop(t + 3);
+    });
+  }
+  function ring() {
+    const b = document.querySelector('.bell');
+    b.classList.remove('ring'); void b.offsetWidth; b.classList.add('ring');
+    ding();
+  }
+  document.getElementById('bell').addEventListener('click', e => { e.stopPropagation(); ring(); });
+  soundBtn.addEventListener('click', () => {
+    soundOn = !soundOn;
+    soundBtn.setAttribute('aria-pressed', soundOn);
+    soundBtn.textContent = soundOn ? '🔔 Sound on' : '🔕 Sound off';
+  });
+
+  let opened = false;
+  function openDoors() {
+    if (opened) return;
+    opened = true;
+    ring();
+    cover.classList.add('opening');
+    INVITE.petals(innerWidth / 2, innerHeight * .4, 28);
+    setTimeout(() => INVITE.petals(innerWidth * .25, innerHeight * .3, 12), 250);
+    setTimeout(() => INVITE.petals(innerWidth * .75, innerHeight * .3, 12), 400);
+    setTimeout(() => {
+      cover.remove();
+      document.body.classList.remove('locked');
+      heroLamps.classList.add('lit');
+      INVITE.observe();
+    }, INVITE.reduced ? 0 : 1400);
+  }
+  cover.addEventListener('click', openDoors);
+  document.getElementById('open').focus();
+</script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lokesh &amp; Haripriya | Wedding Invitation | 21–22 November 2026</title>
+<meta name="description" content="Reception 21 Nov, Wedding 22 Nov 2026 · Banyan Palace - Mukunda Hall, Chennai.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lokesh & Haripriya | Wedding Invitation">
+<meta property="og:description" content="Reception 21 Nov · Wedding 22 Nov 2026 · Banyan Palace, Chennai">
+<meta name="theme-color" content="#F8E7C7">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Noto+Serif:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  .hero { min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 32px 16px; gap: 6px; }
+  .hero .gopuram { width: 92px; }
+  .hero-kolam { position: relative; width: min(64vw, 240px); }
+  .hero-kolam .kolam { width: 100%; display: block; }
+  .hero-kolam .diya { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -58%); background: none; border: 0; cursor: pointer; width: 64px; height: 88px; padding: 0; }
+  .hero-kolam .diya .lamp { width: 44px; }
+  .hero h1 { font-size: clamp(2.4rem, 11vw, 3.4rem); margin: .2em 0 0; }
+  .hero h1 span { color: var(--verm); font-style: italic; font-size: .7em; }
+  .hero .dates { font: 600 1.25rem var(--serif); margin: 0; }
+  .hero .tip { font-size: .8rem; font-style: italic; opacity: .75; margin: 0; }
+  .cue { margin-top: 18px; display: inline-flex; flex-direction: column; align-items: center; min-height: 44px; text-decoration: none; font-weight: 600; letter-spacing: .1em; font-size: .85rem; }
+  .cue::after { content: '⌄'; font-size: 1.6rem; line-height: 1; animation: bob 1.6s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(6px); } }
+
+  /* Kolam draws itself once: on load for the hero, on arrival for each panel. */
+  .kolam .k-lines * { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .hero .kolam .k-lines * { animation: draw 2.6s ease-in-out forwards; }
+  .hero .kolam .k-lines :nth-child(n+3) { animation-delay: .9s; }
+  .in .kolam .k-lines * { animation: draw 1.8s ease-in-out forwards .2s; }
+  .kolam .k-dots { opacity: 0; animation: fade .6s forwards .2s; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes fade { to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .kolam .k-lines * { stroke-dashoffset: 0; } .kolam .k-dots { opacity: 1; } }
+
+  .diya.lit .lamp .flame { fill: #ff9a1f; }
+  .diya.lit .lamp .glow { opacity: .85; }
+  .diya.lit::before { content: ''; position: absolute; inset: -40px; border-radius: 50%; background: radial-gradient(circle, rgba(255,190,90,.45), transparent 65%); pointer-events: none; }
+
+  /* Parchment panels with rolled ends. */
+  .theme-scroll .sec { background: linear-gradient(90deg, #f3dcb0, var(--cream) 12%, var(--cream) 88%, #f3dcb0); border: 0; border-radius: 2px; margin: 52px 6px; box-shadow: 0 12px 30px -20px rgba(75,40,28,.6); }
+  .theme-scroll .sec::before, .theme-scroll .sec::after { content: ''; position: absolute; left: -10px; right: -10px; height: 18px; border-radius: 9px; background: linear-gradient(#e6c48a, #b8862d 55%, #8a5a14); box-shadow: 0 3px 6px rgba(0,0,0,.25); }
+  .theme-scroll .sec::before { top: -12px; }
+  .theme-scroll .sec::after { bottom: -12px; }
+  .js .theme-scroll .reveal { opacity: 0; transform: perspective(700px) rotateX(-18deg); transform-origin: top; transition: opacity .9s, transform 1s cubic-bezier(.4,0,.2,1); }
+  .js .theme-scroll .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .js .theme-scroll .reveal { opacity: 1; transform: none; } }
+  .panel-kolam { width: 56px; margin: 0 auto 4px; display: block; }
+  .panel-kolam .k-lines * { stroke-width: 3.5; }
+  .theme-scroll .venue-reveal .gopuram { width: 110px; }
+</style>
+</head>
+<body class="theme-scroll">
+
+<header class="hero">
+  <svg class="gopuram" aria-hidden="true"></svg>
+  <div class="hero-kolam">
+    <span id="kolam"></span>
+    <button class="diya" id="diya" type="button" aria-pressed="false" aria-label="Light the diya"></button>
+  </div>
+  <p class="tip">Tap the diya to light it</p>
+  <h1>Lokesh <span>&amp;</span> Haripriya</h1>
+  <p class="dates">21 – 22 November 2026</p>
+  <p>Banyan Palace, Chennai</p>
+  <a class="cue" href="#invitation">Scroll to begin</a>
+</header>
+<main id="main"></main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="invite.js"></script>
+<script>
+  const A = INVITE.art;
+  document.querySelector('.hero .gopuram').outerHTML = A.gopuram;
+  document.getElementById('kolam').outerHTML = A.kolam;
+  const diya = document.getElementById('diya');
+  diya.innerHTML = A.lamp;
+  diya.addEventListener('click', () => {
+    const lit = diya.classList.toggle('lit');
+    diya.setAttribute('aria-pressed', lit);
+    diya.setAttribute('aria-label', lit ? 'Dim the diya' : 'Light the diya');
+  });
+
+  INVITE.render(document.getElementById('main'), {
+    ornament: A.kolam.replace('class="kolam"', 'class="kolam panel-kolam"'),
+    collapseVenue: true,
+    venueArt: A.gopuram,
+  });
+  INVITE.observe();
+</script>
+</body>
+</html>
