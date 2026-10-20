@@ -35,24 +35,28 @@ test('each placed piece adds a step, including restored progress, and both paths
 test('bride steps face inward from the left and groom steps from the right, including on phones', () => {
   const progress = {};
   vm.runInNewContext(artwork, { $: () => progress, n: 4 });
-  const steps = [...progress.innerHTML.matchAll(/class="footstep (bride|groom)"[^>]*style="left:([\d.]+)%;top:(\d+)px"/g)]
-    .map(([, person, x, y]) => ({ person, x: +x, y: +y }));
+  const steps = [...progress.innerHTML.matchAll(/class="footstep (bride|groom)"[^>]*style="left:calc\(([\d.]+)% ([+-]) ([\d.]+)px\);top:(\d+)px"/g)]
+    .map(([, person, percent, sign, inset, y]) => ({ person, percent: +percent, inset: +inset * (sign === '-' ? -1 : 1), y: +y }));
   assert.equal(steps.length, 16);
   const bride = steps.filter(p => p.person === 'bride'), groom = steps.filter(p => p.person === 'groom');
   assert.equal(bride.length, 8);
   assert.equal(groom.length, 8);
-  bride.forEach((p, i) => {
-    assert.ok(p.x < 50 && groom[i].x > 50);
-    assert.equal(p.x + groom[i].x, 100, 'paths converge symmetrically');
-    if (i) assert.ok(p.x > bride[i - 1].x && groom[i].x < groom[i - 1].x);
-  });
-  assert.ok(50 - bride.at(-1).x <= 4 && groom.at(-1).x - 50 <= 4);
   assert.equal((progress.innerHTML.match(/rotate\(90\)/g) || []).length, 8);
   assert.equal((progress.innerHTML.match(/rotate\(-90\)/g) || []).length, 8);
   for (const width of [280, 300, 360]) for (const step of steps) {
     const footprintWidth = width < 360 ? 18 : 23;
-    assert.ok(step.x / 100 * width - footprintWidth / 2 >= 0);
-    assert.ok(step.x / 100 * width + footprintWidth / 2 <= width);
+    const x = step.percent / 100 * width + step.inset;
+    assert.ok(x - footprintWidth / 2 >= 0);
+    assert.ok(x + footprintWidth / 2 <= width);
+    assert.ok(step.person === 'bride' ? x + footprintWidth / 2 < width / 2 - 24 : x - footprintWidth / 2 > width / 2 + 24,
+      'both rows leave space around the padded 48px heart');
     assert.ok(step.y + footprintWidth * 32 / 50 < 52);
   }
+  for (const width of [280, 360]) bride.forEach((p, i) => {
+    const x = p.percent / 100 * width + p.inset;
+    const other = groom[i].percent / 100 * width + groom[i].inset;
+    assert.ok(Math.abs(x + other - width) < .001, 'paths converge symmetrically');
+    if (i) assert.ok(x > bride[i - 1].percent / 100 * width + bride[i - 1].inset);
+    if (i === 7) assert.equal(width / 2 - x, 44, 'last footsteps frame the heart');
+  });
 });

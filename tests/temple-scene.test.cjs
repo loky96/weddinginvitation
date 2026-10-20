@@ -4,7 +4,7 @@ const { readFileSync } = require('node:fs');
 const vm = require('node:vm');
 const source = readFileSync(require('node:path').join(__dirname, '../temple-scene.js'), 'utf8');
 
-function mount(width, height, reduced = false) {
+function mount(width, height, reduced = false, fps = 60) {
   const listeners = new Map(), frames = [], timers = [], events = [];
   const classes = new Set();
   const element = () => ({ style: {}, classList: { add: (...names) => names.forEach(n => classes.add(n)) } });
@@ -12,7 +12,7 @@ function mount(width, height, reduced = false) {
   const sections = [{ inert: true }, { inert: true }];
   let skip, removed = false, focused = false, clock = 0;
   const scene = {
-    ...element(), offsetHeight: height * 7.6,
+    ...element(), offsetHeight: height * 6.2,
     querySelector: selector => ({
       '.temple-sticky': { clientWidth: width, clientHeight: height },
       '.temple-art': art, '.temple-leaf.left': left, '.temple-leaf.right': right,
@@ -27,7 +27,7 @@ function mount(width, height, reduced = false) {
       querySelector: () => scene, body: element(), querySelectorAll: () => sections,
       getElementById: () => ({ focus: () => focused = true }),
     },
-    matchMedia: query => ({ matches: query.includes('max-width') ? width <= 768 : reduced }),
+    matchMedia: query => ({ matches: query.includes('max-width') ? width <= 768 && height >= width : reduced }),
     addEventListener: (name, callback) => listeners.set(name, callback),
     removeEventListener: name => listeners.delete(name),
     dispatchEvent: event => events.push(event.type), Event,
@@ -35,37 +35,47 @@ function mount(width, height, reduced = false) {
     setTimeout: callback => timers.push(callback),
   };
   vm.runInNewContext(source, context);
-  const tick = () => { clock += 1000 / 60; frames.shift()?.(clock); };
+  const tick = () => { clock += 1000 / fps; frames.shift()?.(clock); };
   const flush = () => { let guard = 0; while (frames.length) { if (++guard > 4000) throw Error('Animation did not settle'); tick(); } };
   return {
     art, left, right, classes, sections, events, window,
     scroll: p => { window.scrollY = p * (scene.offsetHeight - height); listeners.get('scroll')?.(); flush(); },
     swipe: p => { window.scrollY = p * (scene.offsetHeight - height); listeners.get('scroll')?.(); tick(); },
     settleCamera: flush,
+    advanceFrames: count => { for (let i = 0; i < count; i++) tick(); },
     skip: () => { skip(); flush(); },
     settle: () => { while (timers.length) timers.shift()(); },
     removed: () => removed, focused: () => focused,
   };
 }
 
-for (const [width, height] of [[320, 568], [390, 844], [568, 320], [632, 678], [768, 1024], [1440, 900]]) {
+for (const [width, height] of [[320, 568], [319, 900], [390, 844], [500, 678], [568, 320], [632, 678], [768, 1024], [1440, 900]]) {
   test(`tower → descent → zoom → doors → puzzle at ${width}×${height}`, () => {
     const page = mount(width, height);
     const camera = () => page.art.style.transform.match(/translate\(([-\d.e+]+)px, ([-\d.e+]+)px\) scale\(([-\d.e+]+)\)/).slice(1).map(Number);
     const initial = camera();
-    const imageWidth = width <= 768 ? 841 : 1086, imageHeight = width <= 768 ? 1870 : 1448;
-    assert.ok(Math.abs(initial[1]) < .001, 'camera begins at the temple top');
-    assert.ok(initial[0] <= .001 && initial[0] + imageWidth * initial[2] >= width - .001, 'image fills the viewport width');
-    assert.ok(initial[1] + imageHeight * initial[2] >= height - .001, 'no blank band below the mobile image');
+    const mobile = width <= 768 && height >= width;
+    const imageWidth = mobile ? 841 : 1086, imageHeight = mobile ? 1870 : 1448;
+    if (mobile) {
+      assert.ok(initial[0] >= -.001 && initial[1] >= -.001, 'the complete temple starts inside the phone screen');
+      assert.ok(initial[0] + imageWidth * initial[2] <= width + .001);
+      assert.ok(initial[1] + imageHeight * initial[2] <= height + .001);
+      assert.ok(Math.abs(initial[0] * 2 + imageWidth * initial[2] - width) < .001, 'temple is horizontally centered');
+      assert.ok(Math.abs(initial[1] * 2 + imageHeight * initial[2] - height) < .001, 'temple is vertically centered');
+    } else {
+      assert.ok(Math.abs(initial[1]) < .001, 'camera begins at the temple top');
+      assert.ok(initial[0] <= .001 && initial[0] + imageWidth * initial[2] >= width - .001, 'image fills the viewport width');
+    }
     page.scroll(.42);
     const descended = camera();
-    assert.equal(descended[2], initial[2], 'descent happens before zoom');
+    if (mobile) assert.ok(descended[2] > initial[2], 'phone camera gently approaches from the full temple view');
+    else assert.equal(descended[2], initial[2], 'desktop descent happens before zoom');
     assert.ok(descended[1] < initial[1], 'camera moves down the facade');
     assert.equal(page.left.style.transform, 'rotateY(0deg)');
     page.scroll(.75);
     const zoomed = camera();
     assert.ok(zoomed[2] > initial[2], 'doorway grows to fill the viewport');
-    assert.ok((width <= 768 ? 314 : 358) * zoomed[2] >= width && (width <= 768 ? 610 : 546) * zoomed[2] >= height);
+    assert.ok((mobile ? 314 : 358) * zoomed[2] >= width && (mobile ? 610 : 546) * zoomed[2] >= height);
     assert.equal(page.left.style.transform, 'rotateY(0deg)', 'doors remain closed until zoom finishes');
     page.scroll(.77);
     assert.equal(page.left.style.transform, 'rotateY(-105deg)', 'doors swing open during the crossfade');
@@ -95,4 +105,27 @@ test('a fast swipe cannot jump straight through the door-opening sequence', () =
   assert.ok(!page.classes.has('entered'));
   page.settleCamera();
   assert.ok(page.classes.has('entered'));
+});
+
+test('camera easing follows elapsed time consistently at 30, 60, and 120 fps', () => {
+  const positions = [30, 60, 120].map(fps => {
+    const page = mount(390, 844, false, fps);
+    page.swipe(.02);
+    page.advanceFrames(Math.round(.1 * fps) - 1);
+    return page.art.style.transform.match(/translate\(([-\d.e+]+)px, ([-\d.e+]+)px\)/).slice(1).map(Number);
+  });
+  for (const position of positions) {
+    assert.ok(Math.abs(position[0] - positions[0][0]) < .01);
+    assert.ok(Math.abs(position[1] - positions[0][1]) < .01);
+  }
+});
+
+test('a full swipe plays the entrance in under 3.6 seconds without skipping its start', () => {
+  for (const fps of [30, 60, 120]) {
+    const page = mount(390, 844, false, fps);
+    page.swipe(1);
+    assert.ok(!page.classes.has('entered'));
+    page.advanceFrames(Math.round(3.6 * fps) - 1);
+    assert.ok(page.classes.has('entered'));
+  }
 });

@@ -7,6 +7,7 @@
   const right = scene.querySelector('.temple-leaf.right');
   const cue = scene.querySelector('.scroll-cue');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const narrow = matchMedia('(max-width: 768px) and (orientation: portrait)');
   const clamp = v => Math.max(0, Math.min(1, v));
   const ease = v => { const t = clamp(v); return t * t * (3 - 2 * t); };
   let entered = false, pending = false, shownProgress = 0, lastFrame = 0;
@@ -38,26 +39,26 @@
     if (entered) return;
     const w = viewport.clientWidth, h = viewport.clientHeight;
     const requested = clamp(window.scrollY / Math.max(1, scene.offsetHeight - h));
-    const elapsed = Math.min(Math.max((timestamp - lastFrame) / 1000, 1 / 120), .05);
+    const elapsed = Math.min(Math.max((timestamp - lastFrame) / 1000, 0), .05);
     lastFrame = timestamp;
     const difference = requested - shownProgress;
-    // Cap camera speed so a fast swipe still shows each scene, then ease to its resting point.
+    // Time-based easing stays consistent across refresh rates; the cap keeps every scene visible.
     if (reduced || Math.abs(difference) < .0001) shownProgress = requested;
-    else shownProgress += Math.sign(difference) * Math.min(Math.abs(difference) * .16, elapsed * .18);
+    else shownProgress += Math.sign(difference) * Math.min(Math.abs(difference) * (1 - Math.exp(-12 * elapsed)), elapsed * .24);
     const p = shownProgress;
-    const mobile = matchMedia('(max-width: 768px)').matches;
+    const mobile = narrow.matches;
     const imageW = mobile ? 841 : 1086, imageH = mobile ? 1870 : 1448;
     const doorW = mobile ? 314 : 358, doorH = mobile ? 610 : 546;
     const doorX = mobile ? 421 : 559, doorY = mobile ? 1422 : 960;
-    art.style.width = imageW + 'px';
-    art.style.height = imageH + 'px';
-    const start = Math.max(w / imageW, h / (mobile ? imageH : 1040));
+    const start = mobile ? Math.min(w / imageW, h / imageH) : Math.max(w / imageW, h / 1040);
+    const approach = mobile ? Math.max(w / imageW, h / (imageH * .72)) : start;
     const target = Math.max(w / (doorW * .94), h / (doorH * .94));
     const pan = ease(p / .42);
     const zoom = ease((p - .42) / .32);
-    const s = start + (target - start) * zoom;
-    const initialY = h / (2 * start);
-    const lowY = Math.min(doorY, imageH - h / (2 * start));
+    const approaching = start + (approach - start) * pan;
+    const s = approaching + (target - approaching) * zoom;
+    const initialY = mobile ? imageH / 2 : h / (2 * start);
+    const lowY = Math.min(doorY, imageH - h / (2 * approach));
     const cy = (initialY + (lowY - initialY) * pan) * (1 - zoom) + doorY * zoom;
     const cx = imageW / 2 + (doorX - imageW / 2) * zoom;
     art.style.transform = `translate(${w / 2 - cx * s}px, ${h / 2 - cy * s}px) scale(${s})`;

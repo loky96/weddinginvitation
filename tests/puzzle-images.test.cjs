@@ -38,7 +38,7 @@ test('every supplied image can be selected and is included in the deployment', a
 test('an unavailable random image falls back to the original artwork', async () => {
   const page = mount(0);
   page.image.onerror();
-  assert.equal(page.image.src, 'assets/puzzle-image.png');
+  assert.equal(page.image.src, 'assets/puzzle-image.webp');
   page.image.onload();
   await page.ready;
 });
