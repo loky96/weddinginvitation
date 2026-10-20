@@ -29,6 +29,8 @@
   @media (prefers-reduced-motion: reduce) { .kolam-background { transition: none; } }
   .temple-approach { height: 440svh; background: #1c0d0a; position: relative; z-index: 20; }
   .temple-sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; background: #1c0d0a; }
+  .temple-sticky::before { content: ''; position: absolute; inset: -24px; background: url('assets/temple-entrance.png') center / cover;
+    filter: blur(22px) brightness(.55); opacity: .8; }
   .temple-art { position: absolute; top: 0; left: 0; width: 1086px; height: 1448px; transform-origin: 0 0; will-change: transform; }
   .temple-art img { display: block; width: 100%; height: 100%; }
   .temple-doors { position: absolute; left: 35%; top: 47.5%; width: 33%; height: 37.7%; display: flex; perspective: 900px; background: #432010; }
@@ -106,14 +108,19 @@
   .solved h2::after { display: none; }
   @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
 
-  .scroll-wrap { padding: 14px 30px 80px; }
+  .scroll-wrap { padding: 14px 16px 80px; }
   .scroll-wrap:has(.hang:not(.untied)) { padding-bottom: calc(240px + env(safe-area-inset-bottom)); }
-  .scroll-wrap .hang { width: min(100%, 520px); min-width: 0; }
-  .scroll-wrap .mount { min-width: 0; padding-inline: clamp(8px, 2.4vw, 16px); }
+  .scroll-wrap .hang { width: min(100%, 560px); min-width: 0; }
+  .scroll-wrap .rod, .scroll-wrap .roll { width: 100%; }
+  .scroll-wrap .rod::before, .scroll-wrap .roll::before { left: 0; }
+  .scroll-wrap .rod::after, .scroll-wrap .roll::after { right: 0; }
+  .scroll-wrap .mount { min-width: 0; padding-inline: 0; }
   .scroll-wrap .sheet, .scroll-wrap .paper { min-width: 0; width: 100%; }
   .scroll-wrap .knot .label { border: 0; border-radius: 0; background: transparent; box-shadow: none;
     padding: 6px 4px; font: italic 600 1.15rem/1.35 var(--serif); color: var(--maroon); animation: none; }
-  .paper { background-color: #fbf4e6; background-image: url('assets/paper-texture.svg'); background-size: 192px 192px; }
+  .paper { padding-inline: 10px; background-color: #f9efdc;
+    background-image: url('assets/paper-texture.svg'), linear-gradient(90deg, #b7812e12, transparent 12% 88%, #b7812e12);
+    background-size: 192px 192px, 100% 100%; }
   /* Sleek typesetting inside the scroll: smaller, airier type, quiet dividers, no boxes. */
   .paper { --paisley: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 3c9 0 15 7 15 15 0 10-9 17-17 19C9 34 4 26 6 17 8 9 13 3 20 3z' fill='none' stroke='%23C58B30' stroke-width='1.4'/%3E%3Cpath d='M20 9c5 0 9 4 9 9 0 6-5 10-10 11-5-2-8-7-7-12 1-4 4-8 8-8z' fill='none' stroke='%23B32A1C' stroke-width='1'/%3E%3Ccircle cx='19' cy='19' r='2.2' fill='%23C58B30'/%3E%3Cpath d='M18 33l-4 4M22 33l4 4' stroke='%23587A37' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); }
   .paper .festoon { height: 40px; margin: 0; }
@@ -142,8 +149,8 @@
     background: conic-gradient(from 135deg at 50% 0, var(--gold) 90deg, transparent 0) 0 0 / 8px 6px; opacity: .7; }
   .paper .event-illustration { display: block; width: clamp(120px, 38vw, 180px); max-width: 100%; height: auto;
     aspect-ratio: 1; object-fit: contain; margin: 8px auto 14px; }
-  .paper .qr { padding: 10px; background: #fffaf0; border: 1px solid #c58b3040; border-radius: 6px; }
-  .paper .qr svg { background: #fffaf0; border-radius: 3px; }
+  .paper .qr { padding: 10px; background: transparent; border: 0; border-radius: 0; }
+  .paper .qr svg { background: transparent; }
   .paper .lotus-end { display: block; width: 70px; margin: 14px auto 0; }
   .paper p, .paper h3 { text-wrap: balance; overflow-wrap: break-word; }
   .paper .kolam { width: 34px; margin: 0 auto 8px; display: block; }
@@ -200,7 +207,7 @@
   @keyframes tug { 30% { transform: translateY(6px) rotate(-4deg); } 60% { transform: translateY(-2px) rotate(3deg); } }
   @media (prefers-reduced-motion: reduce) { .paper .kolam .k-lines * { stroke-dashoffset: 0; } }
   @media (max-width: 360px) {
-    .scroll-wrap { padding-inline: 28px; }
+    .scroll-wrap { padding-inline: 12px; }
     .paper h2 { font-size: .68rem; letter-spacing: .18em; }
     .paper .ev-title { font-size: 1.3rem; gap: 6px; }
     .paper .ev-title::before, .paper .ev-title::after { width: 14px; height: 14px; }

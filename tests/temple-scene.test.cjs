@@ -46,15 +46,19 @@ function mount(width, height, reduced = false) {
   };
 }
 
-for (const [width, height] of [[320, 568], [390, 844], [1440, 900]]) {
+for (const [width, height] of [[320, 568], [390, 844], [568, 320], [632, 678], [768, 1024], [1440, 900]]) {
   test(`tower → descent → zoom → doors → puzzle at ${width}×${height}`, () => {
     const page = mount(width, height);
     const camera = () => page.art.style.transform.match(/translate\(([-\d.e+]+)px, ([-\d.e+]+)px\) scale\(([-\d.e+]+)\)/).slice(1).map(Number);
     const initial = camera();
-    assert.ok(Math.abs(initial[1]) < .001, 'initial camera shows the temple top');
+    if (width <= 768) {
+      assert.ok(initial[0] >= -.001 && initial[1] >= -.001, 'temple top and left stay inside the viewport');
+      assert.ok(initial[0] + 1086 * initial[2] <= width + .001, 'complete temple width is visible');
+      assert.ok(initial[1] + 1448 * initial[2] <= height + .001, 'complete temple height is visible');
+    } else assert.ok(Math.abs(initial[1]) < .001, 'desktop camera begins at the tower top');
     page.scroll(.42);
     const descended = camera();
-    assert.equal(descended[2], initial[2], 'descent happens before zoom');
+    if (width > 768) assert.equal(descended[2], initial[2], 'desktop descent happens before zoom');
     assert.ok(descended[1] < initial[1], 'camera moves down the facade');
     assert.equal(page.left.style.transform, 'rotateY(0deg)');
     page.scroll(.75);

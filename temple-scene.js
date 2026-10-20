@@ -34,14 +34,17 @@
     if (entered) return;
     const w = viewport.clientWidth, h = viewport.clientHeight;
     const p = clamp(window.scrollY / Math.max(1, scene.offsetHeight - h));
-    // Full-width tower detail at the top. The camera descends before zooming.
-    const start = Math.max(w / 1086, h / 1040);
+    // Begin with the complete facade on smaller screens, then approach the lower entrance.
+    const overview = w <= 768;
+    const detailScale = Math.max(w / 1086, h / 1040);
+    const start = overview ? Math.min(w / 1086, h / 1448) : detailScale;
     const target = Math.max(w / 340, h / 520);
     const pan = ease(p / .42);
     const zoom = ease((p - .42) / .32);
-    const s = start + (target - start) * zoom;
-    const initialY = h / (2 * start);
-    const lowY = Math.min(960, 1448 - h / (2 * start));
+    const approachScale = overview ? start + (detailScale - start) * pan : start;
+    const s = approachScale + (target - approachScale) * zoom;
+    const initialY = overview ? 724 : h / (2 * start);
+    const lowY = Math.min(960, 1448 - h / (2 * detailScale));
     const cy = (initialY + (lowY - initialY) * pan) * (1 - zoom) + 960 * zoom;
     const cx = 543 + (559 - 543) * zoom;
     art.style.transform = `translate(${w / 2 - cx * s}px, ${h / 2 - cy * s}px) scale(${s})`;

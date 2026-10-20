@@ -1,7 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
   <filter id="paper" x="0" y="0" width="100%" height="100%">
     <feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="3" seed="21" stitchTiles="stitch"/>
-    <feColorMatrix type="matrix" values="0 0 0 0 .45 0 0 0 0 .34 0 0 0 0 .20 0 0 0 .13 0"/>
+    <feColorMatrix type="saturate" values="0"/>
+    <feComponentTransfer><feFuncA type="linear" slope=".22"/></feComponentTransfer>
   </filter>
   <rect width="256" height="256" filter="url(#paper)"/>
+  <g fill="none" stroke="#a58a5c" stroke-width=".35" opacity=".12">
+    <path d="m18 27 9 2m47 36 13-1m62-31 7 3m64 26 10-1M33 134l11 2m66-24 9-3m59 31 12 1m35 50 9 2M21 227l8-2m51-47 12 3m52 49 8-3m53 9 13 2"/>
+  </g>
 </svg>
