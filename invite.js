@@ -92,10 +92,16 @@ const INVITE = {
     ].join('\r\n'));
   };
 
+  const parentLine = (line, index, count) => {
+    const comma = line.indexOf(',');
+    if (index < 2 && comma >= 0) return esc(line.slice(0, comma + 1)) + `<span class="parent-detail">${esc(line.slice(comma + 1))}</span>`;
+    return index >= 2 && index < count - 1 ? `<span class="parent-detail">${esc(line)}</span>` : esc(line);
+  };
+
   const person = p => `<div class="person stagger">
       <h3 class="name">${esc(p.name)}<span class="qual">, ${esc(p.qualifications)}</span></h3>
       <p class="inst">(${esc(p.institution)})</p>
-      <p class="parents">${p.parentage.map(esc).join('<br>')}</p>
+      <p class="parents">${p.parentage.map((line, i) => parentLine(line, i, p.parentage.length)).join('<br>')}</p>
     </div>`;
 
   const eventCard = (ev, open) => `<details class="ev ev-${ev.id} stagger" id="ev-${ev.id}"${open ? ' open' : ''}>

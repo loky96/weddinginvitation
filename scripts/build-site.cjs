@@ -14,7 +14,7 @@ const files = [
   'assets/temple-entrance.png', 'assets/temple-doors.png',
   'assets/puzzle-image.png', 'assets/puzzle-border.svg',
   'assets/kolam-pattern.svg', 'assets/paper-texture.svg',
-  'assets/reception-illustration.png', 'assets/wedding-illustration.png',
+  'assets/reception-symbol.png', 'assets/wedding-symbol.png',
   'assets/kolam-diamond.svg', 'assets/kolam-flower.svg', 'assets/kolam-cross.svg', 'assets/kolam-border.svg',
   'assets/temple-entrance-mobile.png',
   'assets/kolam-horizontal.svg', 'assets/scroll-silk.png', 'assets/traditional-lofi.mp3', 'assets/MUSIC-CREDIT.txt',

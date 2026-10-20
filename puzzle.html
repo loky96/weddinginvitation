@@ -57,7 +57,7 @@
   @media (prefers-reduced-motion: reduce) { .temple-approach.departing, .temple-approach.departing .temple-leaf { transition: none; } }
 
   .game { max-width: 600px; margin: 0 auto; padding: clamp(20px, 4vh, 40px) 20px 12px; text-align: center; }
-  .puzzle-border { height: 22px; background: url('assets/kolam-horizontal.svg') center / 88px 22px repeat-x; margin: 0 0 16px; }
+  .puzzle-border { height: 22px; background: url('assets/kolam-horizontal.svg') center / 48px 22px repeat-x; margin: 0 0 16px; }
   .puzzle-border.bottom { margin: 18px 0 0; }
   @media (max-width: 600px) { .game { padding-left: 10px; padding-right: 10px; } }
   .puzzle-heading { max-width: 460px; margin: 0 auto 10px; }
@@ -78,7 +78,7 @@
   .skip-entrance:focus-visible { outline: 3px solid var(--marigold); outline-offset: 3px; }
 
   .stage { position: relative; margin: 0 auto; touch-action: manipulation; }
-  #board { position: absolute; background: transparent; outline: 1.2px solid rgba(123,7,18,.08); outline-offset: 1px; }
+  #board { position: absolute; background: transparent; }
   .shine { position: absolute; pointer-events: none; overflow: hidden; border-radius: 2px; z-index: 5; }
   .shine::after { content: ''; position: absolute; inset: -20% auto -20% -60%; width: 45%; transform: skewX(-20deg);
     background: linear-gradient(90deg, transparent, rgba(255,236,180,.75), transparent); opacity: 0; }
@@ -135,7 +135,7 @@
   .paper .ev-title { display: inline-flex; align-items: center; gap: 10px; }
   .paper .ev-title::after { content: none; }
   .paper .ev-title + .ev-hint { display: none; }
-  .paper .event-illustration { display: block; width: clamp(120px, 38vw, 180px); max-width: 100%; height: auto;
+  .paper .event-illustration { display: block; width: clamp(110px, 32vw, 150px); max-width: 100%; height: auto;
     aspect-ratio: 1; object-fit: contain; margin: 8px auto 14px; }
   .paper .qr { padding: 10px; background: transparent; border: 0; border-radius: 0; }
   .paper .qr svg { background: transparent; }
@@ -151,6 +151,7 @@
   .paper .qual { display: block; font-size: .48em; letter-spacing: .08em; margin-top: 2px; }
   .paper .inst { font-size: .8rem; color: var(--maroon); letter-spacing: .04em; margin: 2px 0 6px; }
   .paper .parents { font-size: .8rem; line-height: 1.6; color: rgba(75,40,28,.78); }
+  .paper .parents .parent-detail { font-size: .85em; }
   .paper .with { font-size: 1.25rem; margin: .2em 0; }
   .paper .ev-list { gap: 0; }
   .paper .ev { background: none; border: 0; border-radius: 0; padding: 8px 0 16px; }
@@ -268,7 +269,7 @@
 <script>
   const $main = document.getElementById('main');
   const kolamVariants = ['assets/kolam-diamond.svg', 'assets/kolam-flower.svg', 'assets/kolam-cross.svg'];
-  document.querySelector('.kolam-background').innerHTML = kolamVariants.map(src => `<img class="kolam" src="${src}" alt="">`).join('');
+  document.querySelector('.kolam-background').innerHTML = Array.from({ length: 3 }, () => '<img class="kolam" src="assets/kolam-flower.svg" alt="">').join('');
   INVITE.render($main, { ornament: '<img class="section-kolam" src="assets/kolam-diamond.svg" width="46" height="46" alt="" aria-hidden="true">' });
   $main.querySelectorAll('.section-kolam').forEach((image, i) => { image.src = kolamVariants[i % kolamVariants.length]; });
   // This version keeps the scroll lean: no sign-off, share row or links to other designs.
@@ -290,10 +291,10 @@
       </div>`;
     const picture = document.createElement('img');
     picture.className = 'event-illustration';
-    picture.src = ev.id === 'reception' ? 'assets/reception-illustration.png' : 'assets/wedding-illustration.png';
+    picture.src = ev.id === 'reception' ? 'assets/reception-symbol.png' : 'assets/wedding-symbol.png';
     picture.alt = ev.id === 'reception'
-      ? 'Bride and groom in modern formalwear posing for a reception photograph'
-      : 'Bride and groom seated beside the sacred homam fire during their wedding ceremony';
+      ? 'A camera with jasmine flowers and roses for the reception'
+      : 'A sacred homam fire with a kalash and jasmine garland for the wedding ceremony';
     picture.width = picture.height = 320;
     picture.loading = 'lazy';
     card.querySelector('.when').before(picture);
