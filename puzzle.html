@@ -57,6 +57,8 @@
   @media (prefers-reduced-motion: reduce) { .temple-approach.departing, .temple-approach.departing .temple-leaf { transition: none; } }
 
   .game { max-width: 600px; margin: 0 auto; padding: clamp(20px, 4vh, 40px) 20px 12px; text-align: center; }
+  .puzzle-border { height: 22px; background: url('assets/kolam-horizontal.svg') center / 88px 22px repeat-x; margin: 0 0 16px; }
+  .puzzle-border.bottom { margin: 18px 0 0; }
   @media (max-width: 600px) { .game { padding-left: 10px; padding-right: 10px; } }
   .puzzle-heading { max-width: 460px; margin: 0 auto 10px; }
   .game h1 { font: italic 600 clamp(1.2rem, 4.2vw, 1.55rem)/1.4 var(--serif); margin: 0; text-wrap: balance; }
@@ -76,7 +78,7 @@
   .skip-entrance:focus-visible { outline: 3px solid var(--marigold); outline-offset: 3px; }
 
   .stage { position: relative; margin: 0 auto; touch-action: manipulation; }
-  #board { position: absolute; background: transparent; }
+  #board { position: absolute; background: transparent; outline: 1.5px solid #9d774c; outline-offset: 1px; }
   .shine { position: absolute; pointer-events: none; overflow: hidden; border-radius: 2px; z-index: 5; }
   .shine::after { content: ''; position: absolute; inset: -20% auto -20% -60%; width: 45%; transform: skewX(-20deg);
     background: linear-gradient(90deg, transparent, rgba(255,236,180,.75), transparent); opacity: 0; }
@@ -117,7 +119,7 @@
   .scroll-wrap .knot .label { border: 0; border-radius: 0; background: transparent; box-shadow: none;
     padding: 6px 4px; font: italic 600 1.15rem/1.35 var(--serif); color: var(--maroon); animation: none; }
   .paper { padding-inline: 10px; background-color: #f9efdc;
-    background-image: url('assets/paper-texture.svg'); background-size: 192px 192px; }
+    background-image: url('assets/scroll-paper.png'); background-size: 560px 560px; }
   /* Sleek typesetting inside the scroll: smaller, airier type, quiet dividers, no boxes. */
   .paper .festoon { height: 40px; margin: 0; }
   .paper .suzhi { font: 600 1.4rem/1 'Noto Serif Tamil', serif; color: var(--maroon); text-align: center; margin: 6px 0 0; }
@@ -223,6 +225,7 @@
 </section>
 
 <section class="game" aria-labelledby="g-title" inert>
+  <div class="puzzle-border" aria-hidden="true"></div>
   <div class="puzzle-heading">
     <h1 id="g-title" tabindex="-1">Piece together our beginning.</h1>
     <div class="heading-ornament" aria-hidden="true"></div>
@@ -235,6 +238,7 @@
   <div class="solved" id="solved" hidden>
     <h2>Beautifully done! ✨</h2>
   </div>
+  <div class="puzzle-border bottom" aria-hidden="true"></div>
 </section>
 <section class="scroll-wrap" aria-label="Invitation scroll" inert>
   <div class="hang" id="hang">
@@ -249,6 +253,8 @@
     </div>
   </div>
 </section>
+
+<p class="music-credit" style="text-align:center;font-size:10px;padding:0 16px 12px;opacity:.6">Music: <a href="https://commons.wikimedia.org/wiki/File:Thakil_%26_Nadaswaram_during_temple_Deeparadhana.ogg" target="_blank" rel="noopener">Thakil &amp; Nadaswaram</a> by Vis M · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></p>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="invite.js"></script>
@@ -361,6 +367,7 @@
   // Phones use a grid below the board; larger screens scatter pieces around it.
   function scatter(p, slot) {
     const { SW, W, S, cell, boardX, boardY, mobile, looseScale, trayTop } = geo;
+    p.slot = slot;
     p.s = looseScale;
     if (mobile) {
       const w = W * p.s, pitch = w + 10, row = Math.floor(slot / 4);
@@ -381,6 +388,19 @@
       : side === 2 ? [boardX + along, boardY + S + offset]
       : [offset, boardY + along];
     setPos(p, ...p.home);
+  }
+
+  function fitTray(count) {
+    if (geo.mobile) stage.style.height = (geo.trayTop + 18 + Math.ceil(count / 4) * (geo.W * geo.looseScale + 10)) + 'px';
+  }
+
+  function reflowLoosePieces() {
+    const loose = pieces.filter(p => !p.placed).sort((a, b) => a.slot - b.slot);
+    loose.forEach((p, slot) => {
+      p.el.classList.add('glide');
+      scatter(p, slot);
+    });
+    if (loose.length) fitTray(loose.length);
   }
 
   function build(keep = new Set()) {
@@ -437,8 +457,9 @@
       pieces.push(p);
       if (keep.has(r * n + c)) place(p, false);
     }
-    const slots = [...Array(n * n).keys()].sort(() => Math.random() - .5);
     const loose = pieces.filter(p => !p.placed);
+    const slots = [...Array(loose.length).keys()].sort(() => Math.random() - .5);
+    if (loose.length) fitTray(loose.length);
     // Deal pieces from the frame's centre to the spaces around it.
     loose.forEach(p => { p.s = .2; p.el.style.opacity = 0; setPos(p, SW / 2 - W * .1, SW / 2 - W * .1); });
     requestAnimationFrame(() => requestAnimationFrame(() => loose.forEach((p, i) => {
@@ -496,6 +517,7 @@
     p.el.classList.toggle('glide', animate);
     setPos(p, p.tx, p.ty);
     if (animate) {
+      reflowLoosePieces();
       window.InvitationSound?.play('piece', pieces.filter(piece => piece.placed).length);
       setTimeout(() => {
         p.el.classList.add('pop');

@@ -1,6 +1,22 @@
-// Quiet, synthesized interaction sounds. Audio starts only after a user gesture.
+// Quiet interaction sounds and traditional melam. Audio starts after a user gesture.
 (() => {
-  let context, master;
+  let context, master, music, musicGain;
+  function startMusic() {
+    if (document.hidden) return;
+    if (!music) {
+      music = new window.Audio('assets/temple-melam.mp3');
+      music.loop = true;
+      music.preload = 'none';
+      musicGain = context.createGain();
+      musicGain.gain.value = 0;
+      context.createMediaElementSource(music).connect(musicGain).connect(master);
+    }
+    if (!music.paused) return;
+    musicGain.gain.cancelScheduledValues(context.currentTime);
+    musicGain.gain.setValueAtTime(0, context.currentTime);
+    musicGain.gain.linearRampToValueAtTime(.18, context.currentTime + 4);
+    music.play().catch(() => { /* Retry on the next gesture if playback was blocked. */ });
+  }
   async function unlock() {
     try {
       const Audio = window.AudioContext || window.webkitAudioContext;
@@ -11,6 +27,7 @@
         master.gain.value = .45;
         master.connect(context.destination);
       }
+      startMusic();
       if (context.state === 'suspended') await context.resume();
       master.gain.value = .45;
     } catch { /* Audio support is optional; the invitation still works silently. */ }
@@ -58,5 +75,10 @@
   document.addEventListener('pointerdown', unlock, { passive: true });
   document.addEventListener('pointerup', unlock, { passive: true });
   document.addEventListener('keydown', unlock);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) music?.pause();
+    else if (context) unlock();
+  });
+  window.addEventListener('pagehide', () => music?.pause());
   window.InvitationSound = { play };
 })();
