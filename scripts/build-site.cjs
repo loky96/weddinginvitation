@@ -17,7 +17,7 @@ const files = [
   'assets/reception-illustration.png', 'assets/wedding-illustration.png',
   'assets/kolam-diamond.svg', 'assets/kolam-flower.svg', 'assets/kolam-cross.svg', 'assets/kolam-border.svg',
   'assets/temple-entrance-mobile.png',
-  'assets/kolam-horizontal.svg', 'assets/scroll-paper.png', 'assets/temple-melam.mp3', 'assets/MUSIC-CREDIT.txt',
+  'assets/kolam-horizontal.svg', 'assets/scroll-silk.png', 'assets/temple-melam.mp3', 'assets/MUSIC-CREDIT.txt',
   'puzzle-images.js', ...images,
 ];
 
