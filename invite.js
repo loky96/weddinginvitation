@@ -255,13 +255,13 @@ const INVITE = {
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
   }
 
-  function petals(x, y, n = 18) {
+  function petals(x, y, n = 18, fall = 140) {
     if (reduced) return;
     for (let i = 0; i < n; i++) {
       const p = document.createElement('span');
       p.className = 'petal p' + (i % 3);
       const a = Math.random() * Math.PI * 2, r = 40 + Math.random() * 150;
-      p.style.cssText = `left:${x}px;top:${y}px;--dx:${Math.cos(a) * r}px;--dy:${Math.sin(a) * r * 0.5 + 140}px;--rot:${Math.random() * 720 - 360}deg`;
+      p.style.cssText = `left:${x}px;top:${y}px;--dx:${Math.cos(a) * r}px;--dy:${Math.sin(a) * r * 0.5 + fall}px;--rot:${Math.random() * 720 - 360}deg`;
       document.body.append(p);
       setTimeout(() => p.remove(), 1900);
     }

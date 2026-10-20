@@ -35,14 +35,14 @@ function mount(supported = true) {
     gesture: () => handlers.get('pointerdown')(), voices: () => voices };
 }
 
-test('lo-fi music starts once after a gesture, loops quietly, and pauses while hidden', async () => {
+test('solo bansuri starts once after a gesture, loops quietly, and pauses while hidden', async () => {
   const page = mount();
   assert.equal(page.music(), undefined);
   await page.gesture();
   const track = page.music();
-  assert.equal(track.src, 'assets/traditional-lofi.mp3');
+  assert.equal(track.src, 'assets/bansuri-solo.mp3');
   assert.equal(track.loop, true);
-  assert.equal(page.gains[1].gain.target, .14);
+  assert.equal(page.gains[1].gain.target, .12);
   assert.equal(track.paused, false);
   await page.gesture();
   assert.equal(track.plays, 1);

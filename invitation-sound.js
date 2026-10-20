@@ -1,10 +1,10 @@
-// Quiet interaction sounds and Indian chill-hop. Audio starts after a user gesture.
+// Quiet interaction sounds and solo bansuri. Audio starts after a user gesture.
 (() => {
   let context, master, music, musicGain;
   function startMusic() {
     if (document.hidden) return;
     if (!music) {
-      music = new window.Audio('assets/traditional-lofi.mp3');
+      music = new window.Audio('assets/bansuri-solo.mp3');
       music.loop = true;
       music.preload = 'none';
       musicGain = context.createGain();
@@ -14,7 +14,7 @@
     if (!music.paused) return;
     musicGain.gain.cancelScheduledValues(context.currentTime);
     musicGain.gain.setValueAtTime(0, context.currentTime);
-    musicGain.gain.linearRampToValueAtTime(.14, context.currentTime + 4);
+    musicGain.gain.linearRampToValueAtTime(.12, context.currentTime + 4);
     music.play().catch(() => { /* Retry on the next gesture if playback was blocked. */ });
   }
   async function unlock() {

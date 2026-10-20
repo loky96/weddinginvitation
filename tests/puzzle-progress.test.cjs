@@ -7,11 +7,12 @@ const artwork = html.slice(html.indexOf('  const footstepsProgress ='), html.ind
 
 test('each placed piece adds a step, including restored progress, and both paths meet on completion', () => {
   const visible = Array(16).fill(false), attributes = new Map();
-  let completed = 0;
+  let completed = 0, heartVisible = false;
   const context = {
     stage: { classList: { contains: () => false } }, drawBoard: () => {}, n: 4,
     pieces: Array.from({ length: 16 }, () => ({ placed: false })),
     footstepsProgress: {
+      classList: { toggle: (_, visible) => heartVisible = visible },
       querySelectorAll: () => visible.map((_, i) => ({ classList: { toggle: (_, on) => visible[i] = on } })),
       setAttribute: (name, value) => attributes.set(name, value),
     },
@@ -26,6 +27,7 @@ test('each placed piece adds a step, including restored progress, and both paths
     assert.equal(visible.filter((on, i) => on && i % 2 === 0).length, Math.ceil(placed / 2));
     assert.equal(visible.filter((on, i) => on && i % 2 === 1).length, Math.floor(placed / 2));
     assert.equal(attributes.get('aria-valuetext').includes('have met'), placed === 16);
+    assert.equal(heartVisible, placed === 16, 'meeting heart only appears when the puzzle is complete');
   }
   assert.equal(completed, 1);
 });
