@@ -20,7 +20,7 @@ const files = [
   'assets/reception-symbol.webp', 'assets/wedding-symbol.webp',
   'assets/kolam-diamond.svg', 'assets/kolam-flower.svg', 'assets/kolam-cross.svg', 'assets/kolam-border.svg',
   'assets/temple-entrance-mobile.webp',
-  'assets/kolam-horizontal.svg', 'assets/scroll-silk.webp', 'assets/bansuri-solo.mp3', 'assets/MUSIC-CREDIT.txt',
+  'assets/kolam-horizontal.svg', 'assets/kolam-corner.svg', 'assets/scroll-silk.webp', 'assets/bansuri-solo.mp3', 'assets/MUSIC-CREDIT.txt',
   'puzzle-images.js', ...images,
 ];
 

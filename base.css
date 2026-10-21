@@ -151,16 +151,6 @@ button.day { border: 0; font: 700 1rem var(--body); color: #fff; cursor: pointer
 .js .reveal.in .stagger:nth-child(5) { transition-delay: .4s; }
 .js .reveal.in .stagger:nth-child(n+6) { transition-delay: .5s; }
 
-/* Reading progress thread (native scroll-driven; ignored by browsers without support). */
-@supports (animation-timeline: scroll()) {
-  body::before {
-    content: ''; position: fixed; inset: 0 0 auto; height: 3px; z-index: 50;
-    background: linear-gradient(90deg, var(--gold), var(--marigold), var(--verm));
-    transform-origin: left; animation: grow linear both; animation-timeline: scroll(root);
-  }
-  @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-}
-
 .petal { position: fixed; z-index: 60; width: 10px; height: 14px; pointer-events: none; border-radius: 70% 0 70% 0; animation: petal 1.8s cubic-bezier(.2,.6,.4,1) forwards; }
 .petal.p0 { background: var(--marigold); }
 .petal.p1 { background: var(--jasmine); box-shadow: 0 0 0 1px #e5d5b2; border-radius: 50% 50% 50% 0; }

@@ -17,11 +17,10 @@ function mount(width, height, { reduced = false, fps = 60, ready = true } = {}) 
     addEventListener: (name, callback) => imageListeners.set(name, callback) };
   art.querySelector = () => image;
   const sections = [{ inert: true }, { inert: true }];
-  let skip, removed = false, focused = false, clock = 0, exitAt;
+  let removed = false, focused = false, clock = 0, exitAt;
   const scene = {
     ...element(), querySelector: selector => ({
       '.temple-sticky': viewport, '.temple-art': art, '.temple-leaf.left': left, '.temple-leaf.right': right,
-      '.skip-entrance': { addEventListener: (_, callback) => skip = callback },
     })[selector], remove: () => removed = true,
   };
   const window = { scrollY: 0, scrollTo: ({ top }) => window.scrollY = top };
@@ -52,7 +51,7 @@ function mount(width, height, { reduced = false, fps = 60, ready = true } = {}) 
     },
     load: () => imageListeners.get('load')?.(), fail: () => imageListeners.get('error')?.(),
     resize: (w, h) => { width = w; height = h; viewport.clientWidth = w; viewport.clientHeight = h; listeners.get('resize')?.(); },
-    skip: () => skip(), settle: () => { while (timers.length) timers.shift()(); },
+    settle: () => { while (timers.length) timers.shift()(); },
     removed: () => removed, focused: () => focused, exitAt: () => exitAt,
   };
 }
@@ -90,12 +89,7 @@ for (const [width, height] of [[320, 568], [319, 900], [390, 844], [500, 678], [
   });
 }
 
-test('skip entrance and reduced motion reach the puzzle without waiting for autoplay', () => {
-  const skipped = mount(390, 844, { ready: false });
-  skipped.skip(); skipped.advance(50); skipped.settle();
-  assert.ok(skipped.removed());
-  skipped.load(); skipped.advance(6000);
-  assert.equal(skipped.events.length, 1);
+test('reduced motion reaches the puzzle without waiting for autoplay', () => {
   const reduced = mount(390, 844, { reduced: true });
   reduced.advance(50); reduced.settle();
   assert.ok(reduced.removed() && reduced.classes.has('entered'));
@@ -130,7 +124,7 @@ test('entry resets once at the end, then normal puzzle scrolling remains untouch
   assert.equal(page.window.scrollY, 0);
   assert.ok(!page.classes.has('puzzle-entering'));
   page.window.scrollY = 600;
-  page.advance(6000); page.settle(); page.skip();
+  page.advance(6000); page.settle();
   assert.equal(page.window.scrollY, 600);
   assert.deepEqual(page.events, ['temple-entered']);
 });

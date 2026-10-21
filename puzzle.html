@@ -50,14 +50,17 @@
   .temple-approach.departing .temple-leaf { transition: transform .4s cubic-bezier(.4, 0, .2, 1); }
   .temple-approach.departing .temple-sticky { position: absolute; inset: 0; }
   .temple-approach.departing.faded { opacity: 0; }
-  .skip-entrance { position: absolute; top: max(16px, env(safe-area-inset-top)); right: 18px; padding: 10px 14px; border: 1px solid #fff7e750;
-    background: #1e0c0980; color: #fff7e7; font: .75rem var(--body); cursor: pointer; border-radius: 4px; }
   body:not(.entered) .game, body:not(.entered) .scroll-wrap { visibility: hidden; }
   @media (prefers-reduced-motion: reduce) { .temple-approach.departing, .temple-approach.departing .temple-leaf { transition: none; } }
 
   .game { max-width: 600px; margin: 0 auto; padding: clamp(20px, 4vh, 40px) 20px 12px; text-align: center; }
-  .puzzle-border { height: 22px; background: url('assets/kolam-horizontal.svg') center / 48px 22px repeat-x; margin: 0 0 16px; }
-  .puzzle-border.bottom { margin: 18px 0 0; }
+  .puzzle-border.bottom { height: 22px; background: url('assets/kolam-horizontal.svg') center / 48px 22px repeat-x; margin: 18px 0 0; }
+  .puzzle-corners { position: absolute; inset: 8px; pointer-events: none; }
+  .puzzle-corner { position: absolute; width: 56px; height: 56px; opacity: .45; }
+  .puzzle-corner:nth-child(1) { top: 0; left: 0; }
+  .puzzle-corner:nth-child(2) { top: 0; right: 0; transform: scaleX(-1); }
+  .puzzle-corner:nth-child(3) { bottom: 0; left: 0; transform: scaleY(-1); }
+  .puzzle-corner:nth-child(4) { bottom: 0; right: 0; transform: scale(-1); }
   @media (max-width: 600px) { .game { padding-left: 10px; padding-right: 10px; } }
   .puzzle-heading { max-width: 460px; margin: 0 auto 10px; }
   .game h1 { font: italic 600 clamp(1.2rem, 4.2vw, 1.55rem)/1.4 var(--serif); margin: 0; text-wrap: balance; }
@@ -74,7 +77,12 @@
     opacity: 0; transform: translateX(-50%) scale(.5); transition: opacity .5s ease-out, transform .5s ease-out; }
   .footsteps-progress.is-complete .meeting-heart { opacity: 1; transform: translateX(-50%) scale(1); }
   @media (prefers-reduced-motion: reduce) { .footstep, .meeting-heart { transition: none; } }
-  .skip-entrance:focus-visible { outline: 3px solid var(--marigold); outline-offset: 3px; }
+  @media (max-width: 600px) {
+    .game { padding-top: 12px; }
+    .puzzle-heading { margin-bottom: 2px; }
+    .footsteps-progress { margin-bottom: 0; }
+    .puzzle-corner { width: 40px; height: 40px; }
+  }
 
   .stage { position: relative; margin: 0 auto; touch-action: manipulation; }
   #board { position: absolute; background: transparent; }
@@ -218,12 +226,16 @@
         <div class="temple-leaf left"></div><div class="temple-leaf right"></div>
       </div>
     </div>
-    <button class="skip-entrance" type="button">Skip entrance</button>
   </div>
 </section>
 
 <section class="game" aria-labelledby="g-title" inert>
-  <div class="puzzle-border" aria-hidden="true"></div>
+  <div class="puzzle-corners" aria-hidden="true">
+    <img class="puzzle-corner" src="assets/kolam-corner.svg" alt="" width="96" height="96">
+    <img class="puzzle-corner" src="assets/kolam-corner.svg" alt="" width="96" height="96">
+    <img class="puzzle-corner" src="assets/kolam-corner.svg" alt="" width="96" height="96">
+    <img class="puzzle-corner" src="assets/kolam-corner.svg" alt="" width="96" height="96">
+  </div>
   <div class="puzzle-heading">
     <div class="heading-ornament" aria-hidden="true"></div>
     <h1 id="g-title" tabindex="-1">Piece together our beginning.</h1>
@@ -404,7 +416,7 @@
     const mobile = innerWidth <= 600;
     const SW = Math.max(220, Math.min(stage.parentElement.clientWidth - (mobile ? 20 : 40), mobile ? 560 : 520));
     const S = mobile ? SW - 16 : SW * .64, cell = S / n, t = .22 * cell, W = cell + 2 * t;
-    const boardX = (SW - S) / 2, boardY = mobile ? t + 8 : boardX;
+    const boardX = (SW - S) / 2, boardY = mobile ? 8 : boardX;
     const looseScale = mobile ? .56 : .66, trayTop = boardY + S + (mobile ? 14 : 28);
     const stageH = mobile ? trayTop + 4 * W * looseScale + 58 : SW;
     geo = { SW, S, t, cell, W, boardX, boardY, mobile, looseScale, trayTop, stageH };

@@ -78,7 +78,6 @@
     lastFrame = performance.now();
     schedule();
   }
-  scene.querySelector('.skip-entrance').addEventListener('click', finish);
   addEventListener('resize', schedule);
   // Avoid restoring the previous visit halfway through the entrance.
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
