@@ -112,6 +112,14 @@
   .done .piece { visibility: hidden; }
 
   .scroll-wrap { padding: 14px 16px 80px; }
+  .rsvp-section { display: none; position: relative; z-index: 1; width: calc(100% - 32px); max-width: 560px;
+    margin: 0 auto 40px; padding: 24px 0 12px; }
+  .scroll-wrap:has(.hang.unrolled) + .rsvp-section { display: block; }
+  .scroll-wrap:has(.hang.unrolled) { padding-bottom: 28px; }
+  .rsvp-section h2 { text-align: center; font: italic 600 1.8rem/1.25 var(--serif); margin: 0 0 8px; }
+  .rsvp-intro { text-align: center; font-size: .85rem; margin: 0 0 24px; }
+  .rsvp-frame { display: block; width: 100%; height: 880px; border: 0; }
+  .rsvp-fallback { text-align: center; font-size: .8rem; margin: 8px 12px; }
   .scroll-wrap:has(.hang:not(.untied)) { padding-bottom: calc(240px + env(safe-area-inset-bottom)); }
   .scroll-wrap .hang { width: min(100%, 560px); min-width: 0; }
   .scroll-wrap .rod, .scroll-wrap .roll { width: 100%; }
@@ -261,6 +269,15 @@
       <button class="knot" id="knot" type="button" aria-label="Solve the puzzle, or pull down to untie the scroll. Keyboard: press Arrow Down to open." aria-keyshortcuts="ArrowDown"><span class="label">Solve the puzzle to untie</span></button>
     </div>
   </div>
+</section>
+
+<section class="rsvp-section" aria-labelledby="rsvp-title">
+  <h2 id="rsvp-title">Will you join our celebration?</h2>
+  <p class="rsvp-intro">We would love to celebrate with you.</p>
+  <iframe class="rsvp-frame" title="Wedding RSVP: name, attendance, guest count and stay requirements"
+    src="https://docs.google.com/forms/d/e/1FAIpQLSeEegVDxK3C2rIBPXiB6WoJrNempCMXScehYjYsiFMMmoUArg/viewform?embedded=true"
+    width="560" height="880" loading="lazy">Loading RSVP…</iframe>
+  <p class="rsvp-fallback">Having trouble? <a href="https://docs.google.com/forms/d/e/1FAIpQLSeEegVDxK3C2rIBPXiB6WoJrNempCMXScehYjYsiFMMmoUArg/viewform" target="_blank" rel="noopener">Open the RSVP form</a>.</p>
 </section>
 
 <footer class="page-ending">
