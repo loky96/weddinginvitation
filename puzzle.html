@@ -59,6 +59,11 @@
   .page-corner { position: absolute; bottom: 12px; width: 56px; height: 56px; opacity: .55; pointer-events: none; }
   .page-corner.left { left: 12px; transform: scaleY(-1); }
   .page-corner.right { right: 12px; transform: scale(-1); }
+  .page-top-corners { position: absolute; top: 12px; inset-inline: 12px; height: 56px; z-index: 1; pointer-events: none; }
+  .page-top-corners .page-corner { top: 0; bottom: auto; }
+  .page-top-corners .left { left: 0; transform: none; }
+  .page-top-corners .right { right: 0; transform: scaleX(-1); }
+  body:not(.entered) .page-top-corners { visibility: hidden; }
   @media (max-width: 600px) { .game { padding-left: 10px; padding-right: 10px; } }
   .puzzle-heading { max-width: 460px; margin: 0 auto 10px; }
   .game h1 { font: italic 600 clamp(1.2rem, 4.2vw, 1.55rem)/1.4 var(--serif); margin: 0; text-wrap: balance; }
@@ -213,6 +218,10 @@
 <body class="theme-puzzle">
 
 <div class="kolam-background" aria-hidden="true"></div>
+<div class="page-top-corners" aria-hidden="true">
+  <img class="page-corner left" src="assets/kolam-corner.svg" alt="" width="96" height="96">
+  <img class="page-corner right" src="assets/kolam-corner.svg" alt="" width="96" height="96">
+</div>
 
 <section class="temple-approach" aria-label="South Indian temple entrance">
   <div class="temple-sticky">
