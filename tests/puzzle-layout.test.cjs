@@ -22,11 +22,11 @@ test('the empty puzzle board leaves the page background visible', () => {
   assert.equal(canvas.strokeStyle, 'rgba(123,7,18,.08)');
   context.matchMedia = () => ({ matches: true });
   context.drawBoard();
-  assert.equal(canvas.strokeStyle, '#9b805f', 'dark Chrome gets visible guides even when automatic dark detection is unavailable');
+  assert.equal(canvas.strokeStyle, 'rgba(123,7,18,.08)');
   context.document.documentElement.classList.contains = () => true;
   context.drawBoard();
-  assert.equal(canvas.strokeStyle, '#b99b70');
-  assert.equal(canvas.lineWidth, 1.6);
+  assert.equal(canvas.strokeStyle, 'rgba(216,179,117,.55)');
+  assert.equal(canvas.lineWidth, 1.2);
   assert.ok(!html.includes('board-frame'));
   assert.ok(!html.includes('temple-interior'));
 });

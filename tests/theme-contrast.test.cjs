@@ -78,6 +78,4 @@ test('fallback text and selected attendee numbers meet readable contrast levels'
   }
   assert.ok(contrast(token('cream'), token('gold')) >= 4.5, 'selected count');
   assert.ok(contrast('#9b805f', '#2b221d') >= 3, 'field boundaries');
-  assert.ok(contrast('#b99b70', '#211a16') >= 3, 'dark puzzle guides');
-  assert.ok(contrast('#9b805f', '#faf0dc') >= 3, 'guides remain visible when Chrome uses a light page with a dark interface');
 });

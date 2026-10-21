@@ -580,10 +580,9 @@
     bg.clearRect(0, 0, S, S);
     bg.setLineDash([2, 5]);
     bg.lineCap = 'round';
-    const darkTheme = document.documentElement.classList.contains('auto-dark-theme');
-    const darkBrowser = matchMedia('(prefers-color-scheme: dark)').matches;
-    bg.lineWidth = darkTheme || darkBrowser ? 1.6 : 1.2;
-    bg.strokeStyle = darkTheme ? '#b99b70' : darkBrowser ? '#9b805f' : 'rgba(123,7,18,.08)';
+    bg.lineWidth = 1.2;
+    bg.strokeStyle = document.documentElement.classList.contains('auto-dark-theme')
+      ? 'rgba(216,179,117,.55)' : 'rgba(123,7,18,.08)';
     pieces.filter(p => !p.placed).forEach(p => {
       bg.save(); bg.translate(p.c * cell - t, p.r * cell - t); bg.stroke(p.path); bg.restore();
     });
