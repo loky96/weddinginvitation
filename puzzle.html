@@ -29,11 +29,11 @@
   .kolam-background .kolam:nth-child(3) { bottom: -105px; left: -75px; transform: rotate(24deg); }
   .game, .scroll-wrap { position: relative; z-index: 1; }
   @media (prefers-reduced-motion: reduce) { .kolam-background { transition: none; } }
-  .temple-approach { height: 620svh; background: #1c0d0a; position: relative; z-index: 20; }
+  .temple-approach { position: fixed; inset: 0; height: 100svh; height: 100dvh; background: #1c0d0a; z-index: 20; }
   .temple-sticky { position: fixed; inset: 0; height: 100svh; height: 100dvh; overflow: hidden; background: #1c0d0a; }
   .temple-sticky::before { content: ''; position: absolute; inset: -24px; background: url('assets/temple-entrance.webp') center / cover;
     filter: blur(22px) brightness(.55); opacity: .8; }
-  .temple-art { position: absolute; top: 0; left: 0; width: 100%; height: auto; aspect-ratio: 1086 / 1448; transform-origin: 0 0; will-change: transform; }
+  .temple-art { position: absolute; top: 0; left: 50%; width: 100%; height: auto; aspect-ratio: 1086 / 1448; transform: translateX(-50%); transform-origin: 0 0; will-change: transform; }
   .temple-art img { display: block; width: 100%; height: 100%; }
   .temple-doors { position: absolute; left: 35%; top: 47.5%; width: 33%; height: 37.7%; display: flex; perspective: 900px; background: #432010; }
   /* Crop the transparent gutters from the door artwork so the closed edges meet the stone frame. */
@@ -52,10 +52,6 @@
   .temple-approach.departing.faded { opacity: 0; }
   .skip-entrance { position: absolute; top: max(16px, env(safe-area-inset-top)); right: 18px; padding: 10px 14px; border: 1px solid #fff7e750;
     background: #1e0c0980; color: #fff7e7; font: .75rem var(--body); cursor: pointer; border-radius: 4px; }
-  .scroll-cue { position: absolute; bottom: max(16px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
-    margin: 0; padding: 6px 14px; border-radius: 999px; color: #fff7e7; background: rgba(30, 12, 9, .75);
-    font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; white-space: nowrap; pointer-events: none; }
-  .scroll-cue { transition: opacity .3s; }
   body:not(.entered) .game, body:not(.entered) .scroll-wrap { visibility: hidden; }
   @media (prefers-reduced-motion: reduce) { .temple-approach.departing, .temple-approach.departing .temple-leaf { transition: none; } }
 
@@ -223,7 +219,6 @@
       </div>
     </div>
     <button class="skip-entrance" type="button">Skip entrance</button>
-    <p class="scroll-cue" aria-hidden="true">Scroll to explore ↓</p>
   </div>
 </section>
 

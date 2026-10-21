@@ -4,152 +4,159 @@ const { readFileSync } = require('node:fs');
 const vm = require('node:vm');
 const source = readFileSync(require('node:path').join(__dirname, '../temple-scene.js'), 'utf8');
 
-function mount(width, height, reduced = false, fps = 60) {
-  const listeners = new Map(), frames = [], timers = [], events = [];
+function mount(width, height, { reduced = false, fps = 60, ready = true } = {}) {
+  const listeners = new Map(), imageListeners = new Map(), frames = [], timers = [], events = [];
   const classes = new Set();
   const element = () => ({ style: {}, classList: {
     add: (...names) => names.forEach(n => classes.add(n)),
     remove: (...names) => names.forEach(n => classes.delete(n)),
   } });
-  const art = element(), left = element(), right = element(), cue = element();
+  const art = element(), left = element(), right = element();
+  const viewport = { clientWidth: width, clientHeight: height };
+  const image = { complete: ready, naturalWidth: ready ? 841 : 0,
+    addEventListener: (name, callback) => imageListeners.set(name, callback) };
+  art.querySelector = () => image;
   const sections = [{ inert: true }, { inert: true }];
   let skip, removed = false, focused = false, clock = 0;
   const scene = {
-    ...element(), offsetHeight: height * 6.2,
-    querySelector: selector => ({
-      '.temple-sticky': { clientWidth: width, clientHeight: height },
-      '.temple-art': art, '.temple-leaf.left': left, '.temple-leaf.right': right,
-      '.scroll-cue': cue, '.skip-entrance': { addEventListener: (_, callback) => skip = callback },
-    })[selector],
-    remove: () => removed = true,
+    ...element(), querySelector: selector => ({
+      '.temple-sticky': viewport, '.temple-art': art, '.temple-leaf.left': left, '.temple-leaf.right': right,
+      '.skip-entrance': { addEventListener: (_, callback) => skip = callback },
+    })[selector], remove: () => removed = true,
   };
   const window = { scrollY: 0, scrollTo: ({ top }) => window.scrollY = top };
-  const context = {
+  vm.runInNewContext(source, {
     window, history: { scrollRestoration: 'auto' }, performance: { now: () => clock },
-    document: {
-      querySelector: () => scene, body: element(), querySelectorAll: () => sections,
-      getElementById: () => ({ focus: () => focused = true }),
-    },
-    matchMedia: query => ({ matches: query.includes('max-width') ? width <= 768 && height >= width : reduced }),
+    document: { querySelector: () => scene, body: element(), querySelectorAll: () => sections,
+      getElementById: () => ({ focus: () => focused = true }) },
+    matchMedia: query => ({ get matches() { return query.includes('max-width') ? width <= 768 && height >= width : reduced; } }),
     addEventListener: (name, callback) => listeners.set(name, callback),
     removeEventListener: name => listeners.delete(name),
     dispatchEvent: event => events.push(event.type), Event,
-    requestAnimationFrame: callback => frames.push(callback),
-    setTimeout: callback => timers.push(callback),
+    requestAnimationFrame: callback => frames.push(callback), setTimeout: callback => timers.push(callback),
+  });
+  const advance = milliseconds => {
+    const target = clock + milliseconds;
+    while (clock < target - .000001) {
+      clock = Math.min(target, clock + 1000 / fps);
+      frames.splice(0).forEach(callback => callback(clock));
+    }
   };
-  vm.runInNewContext(source, context);
-  const tick = () => { clock += 1000 / fps; frames.shift()?.(clock); };
-  const flush = () => { let guard = 0; while (frames.length) { if (++guard > 4000) throw Error('Animation did not settle'); tick(); } };
   return {
-    art, left, right, classes, sections, events, window,
-    scroll: p => { window.scrollY = p * (scene.offsetHeight - height); listeners.get('scroll')?.(); flush(); },
-    swipe: p => { window.scrollY = p * (scene.offsetHeight - height); listeners.get('scroll')?.(); tick(); },
-    settleCamera: flush,
-    advanceFrames: count => { for (let i = 0; i < count; i++) tick(); },
-    skip: () => { skip(); flush(); },
-    settle: () => { while (timers.length) timers.shift()(); },
+    art, left, right, classes, sections, events, window, listeners, advance,
+    camera: () => {
+      const result = art.style.transform.match(/translate\(([-\d.e+]+)px, ([-\d.e+]+)px\) scale\(([-\d.e+]+)\)/).slice(1).map(Number);
+      result[0] += width / 2;
+      return result;
+    },
+    load: () => imageListeners.get('load')?.(), fail: () => imageListeners.get('error')?.(),
+    resize: (w, h) => { width = w; height = h; viewport.clientWidth = w; viewport.clientHeight = h; listeners.get('resize')?.(); },
+    skip: () => skip(), settle: () => { while (timers.length) timers.shift()(); },
     removed: () => removed, focused: () => focused,
   };
 }
 
 for (const [width, height] of [[320, 568], [319, 900], [390, 844], [500, 678], [568, 320], [632, 678], [768, 1024], [1440, 900]]) {
-  test(`tower → descent → zoom → doors → puzzle at ${width}×${height}`, () => {
-    const page = mount(width, height);
-    const camera = () => page.art.style.transform.match(/translate\(([-\d.e+]+)px, ([-\d.e+]+)px\) scale\(([-\d.e+]+)\)/).slice(1).map(Number);
-    const initial = camera();
+  test(`automatic top → descent → zoom → doors → puzzle at ${width}×${height}`, () => {
+    const page = mount(width, height), initial = page.camera();
     const mobile = width <= 768 && height >= width;
     const imageWidth = mobile ? 841 : 1086, imageHeight = mobile ? 1870 : 1448;
-    assert.ok(Math.abs(initial[1]) < .001, 'camera starts exactly at the top');
+    assert.ok(Math.abs(initial[1]) < .001, 'starts at the temple top');
+    assert.ok(Math.abs(initial[0] + imageWidth * initial[2] / 2 - width / 2) < .001, 'image center matches screen center');
     if (mobile) {
-      assert.ok(Math.abs(initial[0]) < .001, 'phone image begins at the left edge');
-      assert.ok(Math.abs(imageWidth * initial[2] - width) < .001, 'phone image fits the full screen width');
-      assert.equal(page.art.style.width, imageWidth + 'px');
-      assert.equal(page.art.style.height, imageHeight + 'px');
-    } else {
-      assert.ok(Math.abs(initial[1]) < .001, 'camera begins at the temple top');
-      assert.ok(initial[0] <= .001 && initial[0] + imageWidth * initial[2] >= width - .001, 'image fills the viewport width');
+      assert.ok(Math.abs(initial[0]) < .001);
+      assert.ok(Math.abs(imageWidth * initial[2] - width) < .001, 'mobile image fills screen width');
     }
-    page.scroll(.2);
-    assert.equal(camera()[2], initial[2], 'no zoom while the camera is panning');
-    page.scroll(.42);
-    const descended = camera();
-    assert.equal(descended[2], initial[2], 'descent finishes before any zoom');
-    if (mobile) assert.ok(Math.abs(descended[1] - Math.min(0, height - imageHeight * initial[2])) < .001,
-      'phone camera pans all the way to the bottom before zooming');
-    else assert.ok(descended[1] < initial[1], 'camera moves down the facade');
-    assert.equal(page.left.style.transform, 'rotateY(0deg)');
-    page.scroll(.75);
-    const zoomed = camera();
-    assert.ok(zoomed[2] > initial[2], 'doorway grows to fill the viewport');
+    page.advance(1400);
+    assert.equal(page.camera()[2], initial[2], 'pan happens before zoom');
+    page.advance(1300);
+    const descended = page.camera();
+    assert.equal(descended[2], initial[2]);
+    if (mobile) assert.ok(Math.abs(descended[1] - Math.min(0, height - imageHeight * initial[2])) < .001, 'full downward pan');
+    page.advance(1800);
+    const zoomed = page.camera();
     assert.ok((mobile ? 314 : 358) * zoomed[2] >= width && (mobile ? 610 : 546) * zoomed[2] >= height);
-    assert.equal(page.left.style.transform, 'rotateY(0deg)', 'doors remain closed until zoom finishes');
-    page.scroll(.77);
-    assert.equal(page.left.style.transform, 'rotateY(-105deg)', 'doors swing open during the crossfade');
-    assert.ok(page.classes.has('entered'));
-    assert.ok(page.classes.has('faded'), 'entrance fades straight into the puzzle at the start of opening');
+    assert.equal(page.left.style.transform, 'rotateY(0deg)');
+    page.advance(200);
+    assert.equal(page.left.style.transform, 'rotateY(-105deg)');
+    assert.ok(page.classes.has('entered') && page.classes.has('faded'));
     assert.ok(page.sections.every(section => !section.inert));
-    assert.equal(page.window.scrollY, 0, 'puzzle starts at its header');
     assert.deepEqual(page.events, ['temple-entered']);
+    assert.equal(page.window.scrollY, 0);
     page.settle();
     assert.ok(page.removed() && page.focused());
+    assert.ok(!page.classes.has('puzzle-entering'));
   });
 }
 
-test('skip entrance and reduced motion both reach the puzzle', () => {
-  const skipped = mount(390, 844);
-  skipped.skip(); skipped.settle();
-  assert.ok(skipped.removed() && skipped.classes.has('entered'));
-  const reduced = mount(390, 844, true);
-  reduced.scroll(.07); reduced.settle();
+test('skip entrance and reduced motion reach the puzzle without waiting for autoplay', () => {
+  const skipped = mount(390, 844, { ready: false });
+  skipped.skip(); skipped.advance(50); skipped.settle();
+  assert.ok(skipped.removed());
+  skipped.load(); skipped.advance(6000);
+  assert.equal(skipped.events.length, 1);
+  const reduced = mount(390, 844, { reduced: true });
+  reduced.advance(50); reduced.settle();
   assert.ok(reduced.removed() && reduced.classes.has('entered'));
 });
 
-test('a fast swipe cannot jump straight through the door-opening sequence', () => {
-  const page = mount(390, 844);
-  page.swipe(1);
-  assert.equal(page.left.style.transform, 'rotateY(0deg)');
+test('autoplay waits for the temple image to load', () => {
+  const page = mount(390, 844, { ready: false }), initial = page.camera();
+  page.advance(6000);
+  assert.deepEqual(page.camera(), initial);
   assert.ok(!page.classes.has('entered'));
-  page.settleCamera();
+  page.load(); page.advance(4700);
   assert.ok(page.classes.has('entered'));
 });
 
-test('entry resets leftover swipe momentum once, then leaves normal puzzle scrolling alone', () => {
+test('scroll input cannot advance or reverse the automatic entrance', () => {
+  const page = mount(390, 844), control = mount(390, 844);
+  assert.ok(!page.listeners.has('scroll'));
+  page.window.scrollY = 3000;
+  page.advance(1400); control.advance(1400);
+  assert.deepEqual(page.camera(), control.camera());
+  page.window.scrollY = 0;
+  page.advance(3300);
+  assert.ok(page.classes.has('entered'));
+});
+
+test('entry resets once at the end, then normal puzzle scrolling remains untouched', () => {
   const page = mount(390, 844);
-  page.swipe(1);
-  page.settleCamera();
-  assert.ok(page.classes.has('puzzle-entering'), 'scrolling is contained during the entrance fade');
+  assert.ok(page.classes.has('puzzle-entering'));
+  page.advance(4700);
   page.window.scrollY = 480;
   page.settle();
-  assert.equal(page.window.scrollY, 0, 'puzzle starts at the top after the fade ends');
-  assert.ok(!page.classes.has('puzzle-entering'), 'normal scrolling is restored');
-  assert.ok(page.focused());
+  assert.equal(page.window.scrollY, 0);
+  assert.ok(!page.classes.has('puzzle-entering'));
   page.window.scrollY = 600;
-  page.advanceFrames(120);
-  page.settle();
-  page.skip();
-  assert.equal(page.window.scrollY, 600, 'later scrolling is never reset');
+  page.advance(6000); page.settle(); page.skip();
+  assert.equal(page.window.scrollY, 600);
   assert.deepEqual(page.events, ['temple-entered']);
 });
 
-test('camera easing follows elapsed time consistently at 30, 60, and 120 fps', () => {
-  const positions = [30, 60, 120].map(fps => {
-    const page = mount(390, 844, false, fps);
-    page.swipe(.02);
-    page.advanceFrames(Math.round(.1 * fps) - 1);
-    return page.art.style.transform.match(/translate\(([-\d.e+]+)px, ([-\d.e+]+)px\)/).slice(1).map(Number);
+test('automatic camera timing is consistent at 30, 60, and 120 fps', () => {
+  const poses = [30, 60, 120].map(fps => {
+    const page = mount(390, 844, { fps });
+    page.advance(3500);
+    return page.camera();
   });
-  for (const position of positions) {
-    assert.ok(Math.abs(position[0] - positions[0][0]) < .01);
-    assert.ok(Math.abs(position[1] - positions[0][1]) < .01);
-  }
+  for (const pose of poses) pose.forEach((value, i) => assert.ok(Math.abs(value - poses[0][i]) < .001));
 });
 
-test('a full swipe plays the entrance in under 3.6 seconds without skipping its start', () => {
-  for (const fps of [30, 60, 120]) {
-    const page = mount(390, 844, false, fps);
-    page.swipe(1);
-    assert.ok(!page.classes.has('entered'));
-    page.advanceFrames(Math.round(3.6 * fps) - 1);
-    assert.ok(page.classes.has('entered'));
-  }
+test('mobile artwork stays centered when viewport size or orientation changes', () => {
+  const page = mount(390, 844);
+  page.advance(1000);
+  page.resize(360, 800); page.advance(20);
+  assert.ok(Math.abs(page.camera()[0]) < .001);
+  assert.ok(Math.abs(page.camera()[2] * 841 - 360) < .001);
+  page.resize(844, 390); page.advance(20);
+  assert.equal(page.art.style.width, '1086px');
+  assert.ok(Math.abs(page.camera()[0] + 1086 * page.camera()[2] / 2 - 844 / 2) < .001);
+});
+
+test('a missing temple image skips safely into the puzzle', () => {
+  const page = mount(390, 844, { ready: false });
+  page.fail(); page.advance(50); page.settle();
+  assert.ok(page.removed() && page.focused());
+  assert.ok(!page.classes.has('puzzle-entering'));
 });

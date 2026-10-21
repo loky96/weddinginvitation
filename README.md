@@ -1,8 +1,8 @@
 # Lokesh & Haripriya — Wedding Invitation
 
-A static wedding invitation with a scroll-controlled South Indian temple entrance, a 16-piece photo puzzle, diya progress lights, kolam backgrounds, and an unrolling invitation scroll.
+A static wedding invitation with an automatic South Indian temple entrance, a 16-piece photo puzzle, converging footprints, kolam backgrounds, and an unrolling invitation scroll.
 
-Phones use a dedicated tall temple illustration. The camera eases between scenes even after quick swipes. Interwoven kolam variants decorate the page and scroll edges. Gentle synthesized sounds are enabled by default and start after the browser permits audio on the first tap or keypress.
+Phones use a dedicated tall temple illustration, centered at the top and fitted to the screen width. After the image loads, the camera automatically pans down, zooms into the door, and opens into the puzzle. Skip entrance and reduced-motion support remain available. Interwoven kolam variants decorate the page and scroll edges. Background bansuri and interaction sounds start after the browser permits audio on the first tap or keypress.
 
 ## Files
 
