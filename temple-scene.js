@@ -32,7 +32,7 @@
       document.body.classList.remove('puzzle-entering');
       window.scrollTo({ top: 0, behavior: 'instant' });
       document.getElementById('g-title').focus({ preventScroll: true });
-    }, reduced ? 0 : 1150);
+    }, reduced ? 0 : 500);
   }
 
   function draw(timestamp = performance.now()) {
@@ -54,8 +54,8 @@
     }
     const start = mobile ? w / imageW : Math.max(w / imageW, h / 1040);
     const target = Math.max(w / (doorW * .94), h / (doorH * .94));
-    const pan = ease((elapsedTime - 450) / 2200);
-    const zoom = ease((elapsedTime - 2850) / 1600);
+    const pan = ease((elapsedTime - 150) / 950);
+    const zoom = ease((elapsedTime - 1150) / 850);
     const s = start + (target - start) * zoom;
     const initialY = h / (2 * start);
     const lowY = mobile ? Math.max(initialY, imageH - h / (2 * start)) : Math.min(doorY, imageH - h / (2 * start));
@@ -65,7 +65,7 @@
     left.style.transform = 'rotateY(0deg)';
     right.style.transform = 'rotateY(0deg)';
     // The opening doors and entrance crossfade together, with no intermediate reveal card.
-    if (started && elapsedTime >= 4600) finish();
+    if (started && elapsedTime >= 2000) finish();
     else if (started) schedule();
   }
   function schedule() {

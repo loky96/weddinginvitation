@@ -17,7 +17,7 @@ function mount(width, height, { reduced = false, fps = 60, ready = true } = {}) 
     addEventListener: (name, callback) => imageListeners.set(name, callback) };
   art.querySelector = () => image;
   const sections = [{ inert: true }, { inert: true }];
-  let skip, removed = false, focused = false, clock = 0;
+  let skip, removed = false, focused = false, clock = 0, exitAt;
   const scene = {
     ...element(), querySelector: selector => ({
       '.temple-sticky': viewport, '.temple-art': art, '.temple-leaf.left': left, '.temple-leaf.right': right,
@@ -33,7 +33,8 @@ function mount(width, height, { reduced = false, fps = 60, ready = true } = {}) 
     addEventListener: (name, callback) => listeners.set(name, callback),
     removeEventListener: name => listeners.delete(name),
     dispatchEvent: event => events.push(event.type), Event,
-    requestAnimationFrame: callback => frames.push(callback), setTimeout: callback => timers.push(callback),
+    requestAnimationFrame: callback => frames.push(callback),
+    setTimeout: (callback, delay) => { exitAt = clock + delay; timers.push(callback); },
   });
   const advance = milliseconds => {
     const target = clock + milliseconds;
@@ -52,7 +53,7 @@ function mount(width, height, { reduced = false, fps = 60, ready = true } = {}) 
     load: () => imageListeners.get('load')?.(), fail: () => imageListeners.get('error')?.(),
     resize: (w, h) => { width = w; height = h; viewport.clientWidth = w; viewport.clientHeight = h; listeners.get('resize')?.(); },
     skip: () => skip(), settle: () => { while (timers.length) timers.shift()(); },
-    removed: () => removed, focused: () => focused,
+    removed: () => removed, focused: () => focused, exitAt: () => exitAt,
   };
 }
 
@@ -67,13 +68,13 @@ for (const [width, height] of [[320, 568], [319, 900], [390, 844], [500, 678], [
       assert.ok(Math.abs(initial[0]) < .001);
       assert.ok(Math.abs(imageWidth * initial[2] - width) < .001, 'mobile image fills screen width');
     }
-    page.advance(1400);
+    page.advance(650);
     assert.equal(page.camera()[2], initial[2], 'pan happens before zoom');
-    page.advance(1300);
+    page.advance(475);
     const descended = page.camera();
     assert.equal(descended[2], initial[2]);
     if (mobile) assert.ok(Math.abs(descended[1] - Math.min(0, height - imageHeight * initial[2])) < .001, 'full downward pan');
-    page.advance(1800);
+    page.advance(875);
     const zoomed = page.camera();
     assert.ok((mobile ? 314 : 358) * zoomed[2] >= width && (mobile ? 610 : 546) * zoomed[2] >= height);
     assert.equal(page.left.style.transform, 'rotateY(0deg)');
@@ -105,7 +106,7 @@ test('autoplay waits for the temple image to load', () => {
   page.advance(6000);
   assert.deepEqual(page.camera(), initial);
   assert.ok(!page.classes.has('entered'));
-  page.load(); page.advance(4700);
+  page.load(); page.advance(2600);
   assert.ok(page.classes.has('entered'));
 });
 
@@ -113,17 +114,17 @@ test('scroll input cannot advance or reverse the automatic entrance', () => {
   const page = mount(390, 844), control = mount(390, 844);
   assert.ok(!page.listeners.has('scroll'));
   page.window.scrollY = 3000;
-  page.advance(1400); control.advance(1400);
+  page.advance(650); control.advance(650);
   assert.deepEqual(page.camera(), control.camera());
   page.window.scrollY = 0;
-  page.advance(3300);
+  page.advance(1950);
   assert.ok(page.classes.has('entered'));
 });
 
 test('entry resets once at the end, then normal puzzle scrolling remains untouched', () => {
   const page = mount(390, 844);
   assert.ok(page.classes.has('puzzle-entering'));
-  page.advance(4700);
+  page.advance(2100);
   page.window.scrollY = 480;
   page.settle();
   assert.equal(page.window.scrollY, 0);
@@ -137,7 +138,7 @@ test('entry resets once at the end, then normal puzzle scrolling remains untouch
 test('automatic camera timing is consistent at 30, 60, and 120 fps', () => {
   const poses = [30, 60, 120].map(fps => {
     const page = mount(390, 844, { fps });
-    page.advance(3500);
+    page.advance(1750);
     return page.camera();
   });
   for (const pose of poses) pose.forEach((value, i) => assert.ok(Math.abs(value - poses[0][i]) < .001));
@@ -159,4 +160,13 @@ test('a missing temple image skips safely into the puzzle', () => {
   page.fail(); page.advance(50); page.settle();
   assert.ok(page.removed() && page.focused());
   assert.ok(!page.classes.has('puzzle-entering'));
+});
+
+test('the full automatic entrance including its exit finishes in about 2.5 seconds', () => {
+  for (const fps of [30, 60, 120]) {
+    const page = mount(390, 844, { fps });
+    page.advance(2100);
+    assert.ok(page.classes.has('entered'));
+    assert.ok(Math.abs(page.exitAt() - 2500) <= 1000 / fps + 1);
+  }
 });
