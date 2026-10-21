@@ -1,4 +1,4 @@
-/* Hanging scroll in Kanjivaram silk, tied with a cord; INVITE.unroll(hang) opens it. Used by hanging-scroll.html and puzzle.html. */
+/* Hanging scroll in Kanjivaram silk, tied with a cord; INVITE.unroll(hang) opens it. Used by hanging-scroll.html and invite.html. */
 .hang { position: relative; width: min(100% - 80px, 560px); margin: 0 auto; display: flex; flex-direction: column; align-items: center; transform-origin: 50% 0; }
 .js .hang:not(.open) { animation: sway 5s ease-in-out infinite; }
 @keyframes sway { 25% { transform: rotate(.8deg); } 75% { transform: rotate(-.8deg); } }

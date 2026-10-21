@@ -4,6 +4,6 @@
 
 [[redirects]]
   from = "/"
-  to = "/puzzle.html"
+  to = "/invite.html"
   status = 200
 

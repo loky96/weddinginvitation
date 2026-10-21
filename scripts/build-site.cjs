@@ -12,7 +12,7 @@ const images = candidates.filter(name => /\.webp$/i.test(name) || !webpNames.has
 const imageUrls = images.map(file => file.split('/').map(encodeURIComponent).join('/'));
 fs.writeFileSync(path.join(root, 'puzzle-images.js'), `window.PUZZLE_IMAGES = ${JSON.stringify(imageUrls, null, 2)};\n`);
 const files = [
-  'index.html', 'puzzle.html', 'base.css', 'tied-scroll.css',
+  'index.html', 'invite.html', 'puzzle.html', 'base.css', 'tied-scroll.css',
   'invite.js', 'temple-scene.js', 'invitation-sound.js', 'rsvp.js',
   'assets/temple-entrance.webp', 'assets/temple-doors.webp',
   'assets/puzzle-image.webp', 'assets/puzzle-border.svg',

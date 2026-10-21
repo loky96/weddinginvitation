@@ -1,7 +1,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
-const html = require('node:fs').readFileSync(require('node:path').join(__dirname, '../puzzle.html'), 'utf8');
+const html = require('node:fs').readFileSync(require('node:path').join(__dirname, '../invite.html'), 'utf8');
 const update = html.slice(html.indexOf('  function update('), html.indexOf('  function place('));
 const artwork = html.slice(html.indexOf('  const footstepsProgress ='), html.indexOf('  let pieces ='));
 

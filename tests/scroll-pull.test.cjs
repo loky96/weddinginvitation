@@ -1,7 +1,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
-const html = require('node:fs').readFileSync(require('node:path').join(__dirname, '../puzzle.html'), 'utf8');
+const html = require('node:fs').readFileSync(require('node:path').join(__dirname, '../invite.html'), 'utf8');
 const source = html.slice(html.indexOf('  // Pull the cord 80'), html.indexOf('  // Use the jigsaw path'));
 
 function mount() {

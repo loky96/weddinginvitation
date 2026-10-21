@@ -6,7 +6,7 @@ Phones use a dedicated tall temple illustration, centered at the top and fitted 
 
 ## Files
 
-- `puzzle.html`: invitation and puzzle layout.
+- `invite.html`: invitation and puzzle layout (`puzzle.html` redirects here).
 - `temple-scene.js`: temple pan, doorway zoom, and door animation.
 - `invite.js`: names, dates, venue, calendar links, and shared artwork.
 - `puzzle-images/`: photos randomly selected for each new page visit; `assets/puzzle-image.webp` is a fallback.

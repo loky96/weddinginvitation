@@ -191,7 +191,7 @@ const INVITE = {
         <div class="btns stagger">
           <a class="btn gold" href="https://wa.me/?text=${encodeURIComponent(WISH)}" target="_blank" rel="noopener">Send your blessings 🌼</a>
         </div>
-        <p class="small stagger">Other designs: <a href="doors.html">Temple Doors</a> · <a href="garland.html">Garland Reveal</a> · <a href="scroll.html">Wedding Scroll</a> · <a href="hanging-scroll.html">Silk &amp; Sakura Scroll</a> · <a href="puzzle.html">Jigsaw Puzzle</a></p>
+        <p class="small stagger">Other designs: <a href="doors.html">Temple Doors</a> · <a href="garland.html">Garland Reveal</a> · <a href="scroll.html">Wedding Scroll</a> · <a href="hanging-scroll.html">Silk &amp; Sakura Scroll</a> · <a href="invite.html">Jigsaw Puzzle</a></p>
       </section>
       <div class="toast" role="status" aria-live="polite"></div>`;
 

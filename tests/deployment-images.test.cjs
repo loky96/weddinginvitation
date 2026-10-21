@@ -5,6 +5,16 @@ const path = require('node:path');
 const vm = require('node:vm');
 const root = path.join(__dirname, '..');
 
+test('old puzzle links retain query parameters and anchors when redirected to invite.html', () => {
+  const redirect = fs.readFileSync(path.join(root, 'puzzle.html'), 'utf8');
+  let destination;
+  vm.runInNewContext(redirect.match(/<script>([\s\S]*?)<\/script>/)[1], {
+    location: { search: '?solved', hash: '#rsvp-title', replace: value => destination = value },
+  });
+  assert.equal(destination, 'invite.html?solved#rsvp-title');
+  assert.ok(fs.existsSync(path.join(root, 'dist/invite.html')));
+});
+
 test('published raster images are WebP and every image reference resolves', () => {
   const walk = directory => fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry =>
     entry.isDirectory() ? walk(path.join(directory, entry.name)) : [path.join(directory, entry.name)]);
@@ -16,7 +26,7 @@ test('published raster images are WebP and every image reference resolves', () =
     assert.equal(buffer.toString('ascii', 0, 4), 'RIFF');
     assert.equal(buffer.toString('ascii', 8, 12), 'WEBP');
   }
-  const html = fs.readFileSync(path.join(root, 'dist/puzzle.html'), 'utf8');
+  const html = fs.readFileSync(path.join(root, 'dist/invite.html'), 'utf8');
   assert.doesNotMatch(html, /assets\/[^'"\s)]+\.(?:png|jpe?g)\b/i);
   for (const [file] of html.matchAll(/assets\/[a-z0-9-]+\.webp/gi)) assert.ok(fs.existsSync(path.join(root, 'dist', file)), file);
 });

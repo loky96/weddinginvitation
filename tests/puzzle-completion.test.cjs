@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const fs = require('node:fs');
 const path = require('node:path');
-const html = fs.readFileSync(path.join(__dirname, '../puzzle.html'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, '../invite.html'), 'utf8');
 const source = html.slice(html.indexOf('  function complete('), html.indexOf('  // Pull the cord 80'));
 
 function mount() {
