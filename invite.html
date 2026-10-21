@@ -18,7 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Noto+Serif:wght@400;600&family=Noto+Serif+Devanagari:wght@500&family=Noto+Serif+Tamil:wght@600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="base.css?v=20261021-light">
 <link rel="stylesheet" href="tied-scroll.css">
-<script src="theme-contrast.js" defer></script>
+<script src="theme-contrast.js?v=20261021-gold" defer></script>
 <style>
   body.theme-puzzle { background-color: #faf0dc;
     background-image: url('assets/paper-texture.svg'); background-size: 192px 192px; }
@@ -247,7 +247,7 @@
     .paper .chip { gap: 5px; padding: 3px 4px; }
   }
 </style>
-<link rel="stylesheet" href="theme-contrast.css">
+<link rel="stylesheet" href="theme-contrast.css?v=20261021-gold">
 </head>
 <body class="theme-puzzle">
 
@@ -580,9 +580,10 @@
     bg.clearRect(0, 0, S, S);
     bg.setLineDash([2, 5]);
     bg.lineCap = 'round';
-    bg.lineWidth = 1.2;
-    bg.strokeStyle = document.documentElement.classList.contains('auto-dark-theme')
-      ? 'rgba(216,179,117,.55)' : 'rgba(123,7,18,.08)';
+    const darkTheme = document.documentElement.classList.contains('auto-dark-theme');
+    const darkBrowser = matchMedia('(prefers-color-scheme: dark)').matches;
+    bg.lineWidth = darkTheme || darkBrowser ? 1.6 : 1.2;
+    bg.strokeStyle = darkTheme ? '#b99b70' : darkBrowser ? '#9b805f' : 'rgba(123,7,18,.08)';
     pieces.filter(p => !p.placed).forEach(p => {
       bg.save(); bg.translate(p.c * cell - t, p.r * cell - t); bg.stroke(p.path); bg.restore();
     });

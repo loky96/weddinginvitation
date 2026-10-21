@@ -2,8 +2,8 @@
 html.auto-dark-theme {
   color-scheme: only dark !important;
   background-color: #211a16 !important;
-  --maroon: #efb4a6;
-  --verm: #e5ad85;
+  --maroon: #ead2a5;
+  --verm: #d8b375;
   --gold: #d8b375;
   --cream: #30251f;
   --parch: #211a16;
@@ -19,11 +19,11 @@ html.auto-dark-theme {
   background: #2b221d; border-color: #9b805f; color: #f3e6d1;
 }
 .auto-dark-theme .rsvp-form input[type=text]::placeholder { color: #cdbb9f; opacity: 1; }
-.auto-dark-theme .rsvp-count-choice input:checked + span { background: #efb4a6; border-color: #efb4a6; color: #30251f; }
+.auto-dark-theme .rsvp-count-choice input:checked + span { background: var(--gold); border-color: var(--gold); color: #30251f; }
 .auto-dark-theme .rsvp-submit, .auto-dark-theme .paper .btn,
 .auto-dark-theme .paper .btn.ghost, .auto-dark-theme .paper .btn.gold,
 .auto-dark-theme .paper button.day, .auto-dark-theme .paper button.day.hl-wedding {
-  background: #3b2c23; border-color: #9b805f; color: #efb4a6;
+  background: #3b2c23; border-color: #9b805f; color: #ead2a5;
 }
 .auto-dark-theme .paper .btn:hover { background: #49362a; border-color: #d8b375; }
 .auto-dark-theme .paper .chip svg { color: #d8b375; }

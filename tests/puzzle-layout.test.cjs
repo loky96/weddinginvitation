@@ -14,12 +14,19 @@ test('the empty puzzle board leaves the page background visible', () => {
     createLinearGradient() { throw Error('Board must not use a gradient'); },
   };
   const context = { geo: { S: 300, t: 16, cell: 75 }, dpr: 1, pieces: [], board: { getContext: () => canvas },
-    document: { documentElement: { classList: { contains: () => false } } } };
+    document: { documentElement: { classList: { contains: () => false } } }, matchMedia: () => ({ matches: false }) };
   vm.runInNewContext(html.slice(html.indexOf('  function drawBoard('), html.indexOf('  function update(')), context);
   context.drawBoard();
   assert.ok(cleared);
   assert.deepEqual(outline, [.6, .6, 298.8, 298.8], 'outer dotted border stays inside the canvas instead of being clipped');
   assert.equal(canvas.strokeStyle, 'rgba(123,7,18,.08)');
+  context.matchMedia = () => ({ matches: true });
+  context.drawBoard();
+  assert.equal(canvas.strokeStyle, '#9b805f', 'dark Chrome gets visible guides even when automatic dark detection is unavailable');
+  context.document.documentElement.classList.contains = () => true;
+  context.drawBoard();
+  assert.equal(canvas.strokeStyle, '#b99b70');
+  assert.equal(canvas.lineWidth, 1.6);
   assert.ok(!html.includes('board-frame'));
   assert.ok(!html.includes('temple-interior'));
 });

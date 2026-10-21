@@ -35,6 +35,8 @@ test('a dark Chrome interface still keeps the invitation light when its light-on
   assert.ok(!page.classes.has('auto-dark-theme'));
   assert.equal(page.probes(), 0);
   assert.equal(page.events.length, 0);
+  page.change('rgb(255, 255, 255)');
+  assert.deepEqual(page.events, ['invitation-themechange'], 'changing browser preference repaints puzzle guides without switching the light page to dark');
 });
 
 test('actual browser darkening enables the fallback and theme changes restore light colours', () => {
@@ -74,6 +76,8 @@ test('fallback text and selected attendee numbers meet readable contrast levels'
       assert.ok(contrast(foreground, background) >= 4.5, `${foreground} on ${background}`);
     }
   }
-  assert.ok(contrast(token('cream'), token('maroon')) >= 4.5, 'selected count');
+  assert.ok(contrast(token('cream'), token('gold')) >= 4.5, 'selected count');
   assert.ok(contrast('#9b805f', '#2b221d') >= 3, 'field boundaries');
+  assert.ok(contrast('#b99b70', '#211a16') >= 3, 'dark puzzle guides');
+  assert.ok(contrast('#9b805f', '#faf0dc') >= 3, 'guides remain visible when Chrome uses a light page with a dark interface');
 });
