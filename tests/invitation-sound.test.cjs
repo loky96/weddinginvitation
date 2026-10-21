@@ -42,7 +42,7 @@ test('solo bansuri starts once after a gesture, loops quietly, and pauses while 
   const track = page.music();
   assert.equal(track.src, 'assets/bansuri-solo.mp3');
   assert.equal(track.loop, true);
-  assert.equal(page.gains[1].gain.target, .12);
+  assert.equal(page.gains[1].gain.target, .16);
   assert.equal(track.paused, false);
   await page.gesture();
   assert.equal(track.plays, 1);

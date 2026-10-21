@@ -14,7 +14,7 @@
     if (!music.paused) return;
     musicGain.gain.cancelScheduledValues(context.currentTime);
     musicGain.gain.setValueAtTime(0, context.currentTime);
-    musicGain.gain.linearRampToValueAtTime(.12, context.currentTime + 4);
+    musicGain.gain.linearRampToValueAtTime(.16, context.currentTime + 4);
     music.play().catch(() => { /* Retry on the next gesture if playback was blocked. */ });
   }
   async function unlock() {
