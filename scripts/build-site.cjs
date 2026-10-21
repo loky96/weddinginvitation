@@ -14,6 +14,7 @@ fs.writeFileSync(path.join(root, 'puzzle-images.js'), `window.PUZZLE_IMAGES = ${
 const files = [
   'index.html', 'invite.html', 'puzzle.html', 'base.css', 'tied-scroll.css',
   'invite.js', 'temple-scene.js', 'invitation-sound.js', 'rsvp.js',
+  'theme-contrast.js', 'theme-contrast.css',
   'assets/temple-entrance.webp', 'assets/temple-doors.webp',
   'assets/puzzle-image.webp', 'assets/puzzle-border.svg',
   'assets/kolam-pattern.svg', 'assets/paper-texture.svg',

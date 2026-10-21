@@ -13,7 +13,8 @@ test('the empty puzzle board leaves the page background visible', () => {
     fillRect() { throw Error('Board must not paint a separate background'); },
     createLinearGradient() { throw Error('Board must not use a gradient'); },
   };
-  const context = { geo: { S: 300, t: 16, cell: 75 }, dpr: 1, pieces: [], board: { getContext: () => canvas } };
+  const context = { geo: { S: 300, t: 16, cell: 75 }, dpr: 1, pieces: [], board: { getContext: () => canvas },
+    document: { documentElement: { classList: { contains: () => false } } } };
   vm.runInNewContext(html.slice(html.indexOf('  function drawBoard('), html.indexOf('  function update(')), context);
   context.drawBoard();
   assert.ok(cleared);
