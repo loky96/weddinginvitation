@@ -23,7 +23,7 @@ const INVITE = {
         '& Mrs. S. Gomathi, Ph.D',
         'Professor & HoD,',
         'St. Thomas College of Arts and Science',
-        'Koyambedu, Chennai',
+        'Chennai',
       ],
     },
   },
