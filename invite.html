@@ -45,6 +45,9 @@
     background-color: #432010; background-repeat: no-repeat; position: relative; z-index: 1; backface-visibility: hidden; will-change: transform; }
   .temple-leaf.left { background-position: 5.8824% 40.8163%; transform-origin: left center; }
   .temple-leaf.right { background-position: 94.1176% 40.8163%; transform-origin: right center; }
+  @media (max-width: 768px) {
+    .temple-leaf { background-image: url('assets/temple-doors-mobile.webp'); }
+  }
   @media (max-width: 768px) and (orientation: portrait) {
     .temple-sticky::before { background-image: url('assets/temple-entrance-mobile.webp'); }
     .temple-art { aspect-ratio: 841 / 1870; }
