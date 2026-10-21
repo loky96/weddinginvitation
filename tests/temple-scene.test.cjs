@@ -56,21 +56,24 @@ for (const [width, height] of [[320, 568], [319, 900], [390, 844], [500, 678], [
     const initial = camera();
     const mobile = width <= 768 && height >= width;
     const imageWidth = mobile ? 841 : 1086, imageHeight = mobile ? 1870 : 1448;
+    assert.ok(Math.abs(initial[1]) < .001, 'camera starts exactly at the top');
     if (mobile) {
-      assert.ok(initial[0] >= -.001 && initial[1] >= -.001, 'the complete temple starts inside the phone screen');
-      assert.ok(initial[0] + imageWidth * initial[2] <= width + .001);
-      assert.ok(initial[1] + imageHeight * initial[2] <= height + .001);
-      assert.ok(Math.abs(initial[0] * 2 + imageWidth * initial[2] - width) < .001, 'temple is horizontally centered');
-      assert.ok(Math.abs(initial[1] * 2 + imageHeight * initial[2] - height) < .001, 'temple is vertically centered');
+      assert.ok(Math.abs(initial[0]) < .001, 'phone image begins at the left edge');
+      assert.ok(Math.abs(imageWidth * initial[2] - width) < .001, 'phone image fits the full screen width');
+      assert.equal(page.art.style.width, imageWidth + 'px');
+      assert.equal(page.art.style.height, imageHeight + 'px');
     } else {
       assert.ok(Math.abs(initial[1]) < .001, 'camera begins at the temple top');
       assert.ok(initial[0] <= .001 && initial[0] + imageWidth * initial[2] >= width - .001, 'image fills the viewport width');
     }
+    page.scroll(.2);
+    assert.equal(camera()[2], initial[2], 'no zoom while the camera is panning');
     page.scroll(.42);
     const descended = camera();
-    if (mobile) assert.ok(descended[2] > initial[2], 'phone camera gently approaches from the full temple view');
-    else assert.equal(descended[2], initial[2], 'desktop descent happens before zoom');
-    assert.ok(descended[1] < initial[1], 'camera moves down the facade');
+    assert.equal(descended[2], initial[2], 'descent finishes before any zoom');
+    if (mobile) assert.ok(Math.abs(descended[1] - Math.min(0, height - imageHeight * initial[2])) < .001,
+      'phone camera pans all the way to the bottom before zooming');
+    else assert.ok(descended[1] < initial[1], 'camera moves down the facade');
     assert.equal(page.left.style.transform, 'rotateY(0deg)');
     page.scroll(.75);
     const zoomed = camera();

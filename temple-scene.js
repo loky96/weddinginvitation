@@ -50,15 +50,17 @@
     const imageW = mobile ? 841 : 1086, imageH = mobile ? 1870 : 1448;
     const doorW = mobile ? 314 : 358, doorH = mobile ? 610 : 546;
     const doorX = mobile ? 421 : 559, doorY = mobile ? 1422 : 960;
-    const start = mobile ? Math.min(w / imageW, h / imageH) : Math.max(w / imageW, h / 1040);
-    const approach = mobile ? Math.max(w / imageW, h / (imageH * .72)) : start;
+    if (art.style.width !== imageW + 'px') {
+      art.style.width = imageW + 'px';
+      art.style.height = imageH + 'px';
+    }
+    const start = mobile ? w / imageW : Math.max(w / imageW, h / 1040);
     const target = Math.max(w / (doorW * .94), h / (doorH * .94));
     const pan = ease(p / .42);
     const zoom = ease((p - .42) / .32);
-    const approaching = start + (approach - start) * pan;
-    const s = approaching + (target - approaching) * zoom;
-    const initialY = mobile ? imageH / 2 : h / (2 * start);
-    const lowY = Math.min(doorY, imageH - h / (2 * approach));
+    const s = start + (target - start) * zoom;
+    const initialY = h / (2 * start);
+    const lowY = mobile ? Math.max(initialY, imageH - h / (2 * start)) : Math.min(doorY, imageH - h / (2 * start));
     const cy = (initialY + (lowY - initialY) * pan) * (1 - zoom) + doorY * zoom;
     const cx = imageW / 2 + (doorX - imageW / 2) * zoom;
     art.style.transform = `translate(${w / 2 - cx * s}px, ${h / 2 - cy * s}px) scale(${s})`;

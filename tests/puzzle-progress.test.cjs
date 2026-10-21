@@ -43,6 +43,13 @@ test('bride steps face inward from the left and groom steps from the right, incl
   assert.equal(groom.length, 8);
   assert.equal((progress.innerHTML.match(/rotate\(90\)/g) || []).length, 8);
   assert.equal((progress.innerHTML.match(/rotate\(-90\)/g) || []).length, 8);
+  const glyphs = [...progress.innerHTML.matchAll(/<svg class="footstep (bride|groom)"[\s\S]*?<\/svg>/g)];
+  glyphs.forEach(([markup, person], i) => {
+    const stride = Math.floor(i / 2);
+    const flipped = markup.includes('<g transform="translate(0 32) scale(1 -1)">');
+    assert.equal(flipped, person === 'bride' ? stride % 2 === 1 : stride % 2 === 0,
+      'groom footprints are vertically flipped while still pointing towards the heart');
+  });
   for (const width of [280, 300, 360]) for (const step of steps) {
     const footprintWidth = width < 360 ? 18 : 23;
     const x = step.percent / 100 * width + step.inset;
