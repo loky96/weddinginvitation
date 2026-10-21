@@ -18,7 +18,7 @@
     removeEventListener('scroll', schedule);
     removeEventListener('resize', schedule);
     scene.classList.add('departing');
-    document.body.classList.add('entered');
+    document.body.classList.add('entered', 'puzzle-entering');
     document.querySelectorAll('.game, .scroll-wrap').forEach(section => section.inert = false);
     window.scrollTo({ top: 0, behavior: 'instant' });
     dispatchEvent(new Event('temple-entered'));
@@ -30,6 +30,8 @@
     window.InvitationSound?.play('doors');
     setTimeout(() => {
       scene.remove();
+      document.body.classList.remove('puzzle-entering');
+      window.scrollTo({ top: 0, behavior: 'instant' });
       document.getElementById('g-title').focus({ preventScroll: true });
     }, reduced ? 0 : 1150);
   }

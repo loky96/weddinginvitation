@@ -7,7 +7,10 @@ const source = readFileSync(require('node:path').join(__dirname, '../temple-scen
 function mount(width, height, reduced = false, fps = 60) {
   const listeners = new Map(), frames = [], timers = [], events = [];
   const classes = new Set();
-  const element = () => ({ style: {}, classList: { add: (...names) => names.forEach(n => classes.add(n)) } });
+  const element = () => ({ style: {}, classList: {
+    add: (...names) => names.forEach(n => classes.add(n)),
+    remove: (...names) => names.forEach(n => classes.delete(n)),
+  } });
   const art = element(), left = element(), right = element(), cue = element();
   const sections = [{ inert: true }, { inert: true }];
   let skip, removed = false, focused = false, clock = 0;
@@ -108,6 +111,24 @@ test('a fast swipe cannot jump straight through the door-opening sequence', () =
   assert.ok(!page.classes.has('entered'));
   page.settleCamera();
   assert.ok(page.classes.has('entered'));
+});
+
+test('entry resets leftover swipe momentum once, then leaves normal puzzle scrolling alone', () => {
+  const page = mount(390, 844);
+  page.swipe(1);
+  page.settleCamera();
+  assert.ok(page.classes.has('puzzle-entering'), 'scrolling is contained during the entrance fade');
+  page.window.scrollY = 480;
+  page.settle();
+  assert.equal(page.window.scrollY, 0, 'puzzle starts at the top after the fade ends');
+  assert.ok(!page.classes.has('puzzle-entering'), 'normal scrolling is restored');
+  assert.ok(page.focused());
+  page.window.scrollY = 600;
+  page.advanceFrames(120);
+  page.settle();
+  page.skip();
+  assert.equal(page.window.scrollY, 600, 'later scrolling is never reset');
+  assert.deepEqual(page.events, ['temple-entered']);
 });
 
 test('camera easing follows elapsed time consistently at 30, 60, and 120 fps', () => {
