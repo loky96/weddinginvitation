@@ -33,4 +33,9 @@ for (const file of files) {
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.copyFileSync(path.join(root, file), target);
 }
-console.log(`Prepared ${files.length} invitation files in dist/.`);
+const invitation = fs.readFileSync(path.join(root, 'invite.html'), 'utf8');
+const withoutRsvp = invitation
+  .replace(/<section class="rsvp-section"[\s\S]*?<\/section>\s*/, '')
+  .replace(/<script src="rsvp\.js[^"\n]*"><\/script>\s*/, '');
+fs.writeFileSync(path.join(outputDirectory, 'invitation.html'), withoutRsvp);
+console.log(`Prepared ${files.length + 1} invitation files in dist/.`);

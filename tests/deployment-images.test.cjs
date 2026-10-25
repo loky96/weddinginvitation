@@ -5,6 +5,16 @@ const path = require('node:path');
 const vm = require('node:vm');
 const root = path.join(__dirname, '..');
 
+test('the clean invitation URL contains the puzzle and scroll without RSVP', () => {
+  const standard = fs.readFileSync(path.join(root, 'dist/invite.html'), 'utf8');
+  const alternative = fs.readFileSync(path.join(root, 'dist/invitation.html'), 'utf8');
+  assert.match(standard, /id="rsvp-form"/);
+  assert.doesNotMatch(alternative, /<section class="rsvp-section"|id="rsvp-form"|<script src="rsvp\.js/);
+  assert.match(alternative, /id="g-title"/);
+  assert.match(alternative, /class="scroll-wrap"/);
+  assert.match(alternative, /class="page-ending"/);
+});
+
 test('old puzzle links retain query parameters and anchors when redirected to invite.html', () => {
   const redirect = fs.readFileSync(path.join(root, 'puzzle.html'), 'utf8');
   let destination;
