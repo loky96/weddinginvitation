@@ -16,6 +16,7 @@ function mount(fetchResult) {
     addEventListener: (event, callback) => handlers[event] = callback,
   };
   vm.runInNewContext(client, {
+    location: { search: '' },
     document: { getElementById: id => ({ 'rsvp-form': form, 'rsvp-details': details, 'rsvp-status': status })[id] },
     URLSearchParams, AbortController, setTimeout: () => 1, clearTimeout() {},
     FormData: class { *[Symbol.iterator]() {
@@ -29,6 +30,18 @@ function mount(fetchResult) {
     submit: () => handlers.submit({ preventDefault() {} }),
   };
 }
+
+test('the no-RSVP link removes the entire section without initializing submissions', () => {
+  let removed = false;
+  vm.runInNewContext(client, {
+    location: { search: '?rsvp=off' }, URLSearchParams,
+    document: { querySelector: selector => {
+      assert.equal(selector, '.rsvp-section');
+      return { remove() { removed = true; } };
+    }, getElementById() { throw Error('RSVP must not initialize'); } },
+  });
+  assert.ok(removed);
+});
 
 test('declining hides and omits guest count and stay details', async () => {
   const page = mount(() => ({ ok: true, json: async () => ({ ok: true }) }));

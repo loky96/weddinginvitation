@@ -1,4 +1,8 @@
 (() => {
+  if (new URLSearchParams(location.search).get('rsvp') === 'off') {
+    document.querySelector('.rsvp-section')?.remove();
+    return;
+  }
   const form = document.getElementById('rsvp-form');
   const details = document.getElementById('rsvp-details');
   const status = document.getElementById('rsvp-status');
